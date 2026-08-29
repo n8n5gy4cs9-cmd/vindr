@@ -88,6 +88,7 @@
 - [x] Task 17: glass and glow shell finish.
   - [x] Add layered radial and linear gradients to the window, toolbar, tab strip, tabs, and capsules.
   - [x] Add native material blur, focus and status glows, hover borders, and a pulsing privacy LED.
+  - [x] Match the active-tab border to the mockup's subtle 10%-to-3% vertical gradient.
   - [x] Keep browser behavior unchanged and synchronize the feature inventory.
   - [x] Build successfully (`swift build`).
 - [x] Task 18: configurable tab-strip hiding.

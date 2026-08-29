@@ -105,6 +105,14 @@ private enum VindRTheme {
         LinearGradient(colors: [bgTab.opacity(0.8), bgDeep], startPoint: .top, endPoint: .bottom)
     }
 
+    static var activeTabBorderGradient: LinearGradient {
+        LinearGradient(
+            colors: [Color.white.opacity(0.10), Color.white.opacity(0.03)],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
+
     static var cyanBlueGradient: LinearGradient {
         LinearGradient(colors: [accentCyan, accentBlue], startPoint: .leading, endPoint: .trailing)
     }
@@ -201,7 +209,7 @@ private struct TabItemView: View {
             RoundedRectangle(cornerRadius: 6)
                 .stroke(
                     isSelected
-                        ? VindRTheme.borderGradient
+                        ? VindRTheme.activeTabBorderGradient
                         : LinearGradient(colors: [.clear], startPoint: .top, endPoint: .bottom),
                     lineWidth: 1
                 )
