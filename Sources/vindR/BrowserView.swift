@@ -19,10 +19,7 @@ struct BrowserView: View {
         }
         .tint(VindRTheme.accentCyan)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background {
-            VindRTheme.windowGradient
-                .ignoresSafeArea()
-        }
+        .background(VindRTheme.windowGradient)
         .navigationTitle(browser.selectedTab.title)
         .onReceive(NotificationCenter.default.publisher(for: BrowserNotice.focusLocation)) { _ in
             addressFocused = true
@@ -65,7 +62,11 @@ struct BrowserView: View {
         .padding(.trailing, 10)
         .frame(height: 20)
         .background {
-            VindRTheme.toolbarGradient
+            ZStack {
+                VindRTheme.chromeTop
+                    .ignoresSafeArea(edges: .top)
+                VindRTheme.toolbarGradient
+            }
         }
         .overlay(alignment: .top) {
             Rectangle().fill(Color.white.opacity(0.06)).frame(height: 1)
@@ -365,7 +366,11 @@ private struct TopBarView: View {
         .padding(.trailing, 12)
         .frame(height: browser.toolbarHeight)
         .background {
-            VindRTheme.toolbarGradient
+            ZStack {
+                VindRTheme.chromeTop
+                    .ignoresSafeArea(edges: .top)
+                VindRTheme.toolbarGradient
+            }
         }
         .overlay(alignment: .bottom) {
             Rectangle().fill(Color.white.opacity(0.08)).frame(height: 1)

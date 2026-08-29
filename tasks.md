@@ -133,3 +133,6 @@
   - [x] Keep the title bar transparent to the configured window background so it continues into the toolbar.
 - [x] Task 26: active-tab title contrast.
   - [x] Set active tab titles to `rgb(255, 255, 255)` in both tab layouts.
+- [x] Task 27: prevent title-bar background bleed.
+  - [x] Stop the full-window navy gradient from covering the native title-bar safe area.
+  - [x] Extend solid `rgb(52, 59, 83)` behind the traffic lights in visible and collapsed states.
