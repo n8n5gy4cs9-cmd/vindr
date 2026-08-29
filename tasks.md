@@ -1,0 +1,70 @@
+# Tasks
+
+- [x] Plan scope and architecture.
+- [x] Task 1: launchable single-tab browser shell.
+  - [x] Create Swift package/app entry point.
+  - [x] Embed WKWebView with observable navigation state.
+  - [x] Add tiny hideable toolbar and URL/search handling.
+  - [x] Add Cmd-L, Cmd-K, Cmd-Shift-C shortcuts.
+  - [x] Build successfully (`swift build`).
+- [x] Generate and package native app icon for Dock, Finder, and app UI.
+- [x] Task 2: privacy controls and content blocker.
+  - [x] Add native WKContentRuleList ad/tracker blocking.
+  - [x] Add persistent/private WKWebsiteDataStore switch.
+  - [x] Add per-session JavaScript switch.
+  - [x] Add compact privacy menu.
+  - [x] Build and verify app bundle (`dist/vindR.app`).
+- [x] Task 3: tabs, freezing, watchdog recovery.
+  - [x] Add a compact tab strip with create, select, close, and keyboard commands.
+  - [x] Release background web views after five minutes and restore their last URL on selection.
+  - [x] Recreate a tab automatically when its WebKit content process terminates.
+- [x] Task 4: dark mode and reader view.
+  - [x] Add reversible dark CSS injection for loaded pages.
+  - [x] Add a sanitized, locally rendered reader view with original-page restoration.
+  - [x] Build successfully (`swift build`).
+- [x] Task 5: console, terminal, process viewer.
+  - [x] Add bounded, per-tab page-console capture.
+  - [x] Add an app terminal with explicit session permission and warning.
+  - [x] Add an opt-in process viewer.
+  - [x] Build successfully (`swift build`).
+- [x] Task 6: local notes and sketchpad.
+  - [x] Add automatically saved, on-device text notes.
+  - [x] Add an automatically saved sketchpad with undo and clear.
+  - [x] Integrate the notes panel into the browser.
+  - [x] Build successfully (`swift build`).
+- [x] Task 7: settings and polish.
+  - [x] Persist blocker, JavaScript, dark-page, search-engine, and freeze-timer preferences.
+  - [x] Add native search-engine selection and configurable background freezing.
+  - [x] Add website-data clearing without affecting local notes.
+  - [x] Add and integrate the settings interface.
+  - [x] Add complete keyboard-command help to Settings.
+  - [x] Write the README user guide.
+  - [x] Build successfully (`swift build`).
+- [x] Task 8: page-opened tabs and unrestricted browsing.
+  - [x] Open `target="_blank"` and `window.open` pages in vindR tabs.
+  - [x] Add a persisted unrestricted-browsing setting for flagged sites and invalid HTTPS certificates.
+  - [x] Document the behavior and build successfully (`swift build`).
+- [x] Task 9: colorful browser chrome and clearer developer tools.
+  - [x] Add restrained color to the tab strip and toolbar.
+  - [x] Add semantic color and readable formatting to console, terminal, and process output.
+  - [x] Build successfully (`swift build`).
+- [x] Task 10: native file downloads.
+  - [x] Handle download links, unsupported file types, and attachment responses.
+  - [x] Let the user choose a destination with a native save dialog.
+  - [x] Show download progress state in the toolbar and document the behavior.
+  - [x] Build successfully (`swift build`).
+- [x] Task 11: opt-in web developer suite.
+  - [x] Diagnose and regression-test developer capture overhead and filtering.
+  - [x] Add a persistent, opt-in JavaScript console with evaluation, history, search, and level filters.
+  - [x] Add a persistent, opt-in network inspector with request filtering and status coloring.
+  - [x] Add a persistent, opt-in application inspector for cookies and web storage.
+  - [x] Add Settings toggles for every web developer feature and keep disabled features overhead-free.
+  - [x] Document the developer workflow and build successfully (`swift build`).
+- [x] Task 12: current feature inventory.
+  - [x] Add a feature-only `features.md` inventory.
+  - [x] Require future user-visible changes to keep the inventory synchronized.
+- [x] Task 13: distributable ZIP and user manual.
+  - [x] Add a general-use `user-manual.md`.
+  - [x] Package `vindR.app` and `user-manual.md` into `dist/vindR-macOS.zip`.
+  - [x] Require future user-facing changes to keep the manual synchronized.
+  - [x] Run the release packaging flow and verify the ZIP contents.
