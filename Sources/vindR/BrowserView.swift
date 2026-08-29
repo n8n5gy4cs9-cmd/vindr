@@ -275,6 +275,7 @@ struct WebView: NSViewRepresentable {
             in: configuration.userContentController,
             tab: tab,
             consoleEnabled: browser.consoleEnabled,
+            consoleModules: browser.consoleCaptureModules,
             networkEnabled: browser.networkInspectionEnabled
         )
         let webView = WKWebView(frame: .zero, configuration: configuration)
@@ -367,6 +368,51 @@ struct WebView: NSViewRepresentable {
             let popupWebView = WKWebView(frame: .zero, configuration: configuration)
             browser.openTab(with: popupWebView, requestedURL: navigationAction.request.url)
             return popupWebView
+        }
+
+        func webView(
+            _ webView: WKWebView,
+            runJavaScriptAlertPanelWithMessage message: String,
+            initiatedByFrame frame: WKFrameInfo,
+            completionHandler: @escaping () -> Void
+        ) {
+            guard browser.javaScriptAlertEnabled else {
+                completionHandler()
+                return
+            }
+            JavaScriptDialogPresenter.showAlert(message: message, in: webView, completion: completionHandler)
+        }
+
+        func webView(
+            _ webView: WKWebView,
+            runJavaScriptConfirmPanelWithMessage message: String,
+            initiatedByFrame frame: WKFrameInfo,
+            completionHandler: @escaping (Bool) -> Void
+        ) {
+            guard browser.javaScriptConfirmEnabled else {
+                completionHandler(false)
+                return
+            }
+            JavaScriptDialogPresenter.showConfirm(message: message, in: webView, completion: completionHandler)
+        }
+
+        func webView(
+            _ webView: WKWebView,
+            runJavaScriptTextInputPanelWithPrompt prompt: String,
+            defaultText: String?,
+            initiatedByFrame frame: WKFrameInfo,
+            completionHandler: @escaping (String?) -> Void
+        ) {
+            guard browser.javaScriptPromptEnabled else {
+                completionHandler(nil)
+                return
+            }
+            JavaScriptDialogPresenter.showPrompt(
+                message: prompt,
+                defaultText: defaultText,
+                in: webView,
+                completion: completionHandler
+            )
         }
 
         func webView(

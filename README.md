@@ -105,9 +105,17 @@ Open Developer Tools with the tools button or Command-Option-I.
 #### Console
 
 The JavaScript console is off by default. Enable it in Settings or directly in
-the Console view. It captures `log`, `info`, `warn`, `error`, `debug`, uncaught
-page errors, and unhandled promise rejections. Enter JavaScript in the command
-field to evaluate it in the current page; results and exceptions appear inline.
+the Console view. It captures the complete standard Console API, including
+messages and clearing, assertions and traces, objects and tables, counters,
+timers, groups, uncaught page errors, and unhandled promise rejections. Optional
+WebKit profiling/timestamp methods are also supported. Enter JavaScript in the
+command field to evaluate it in the current page; results and exceptions appear
+inline.
+
+Open **JavaScript Modules…** from Settings or the Console toolbar to toggle
+command evaluation and every capture family independently. The same page
+controls native `alert()`, `confirm()`, and `prompt()` sheets individually. All
+module choices persist; disabled capture families install no page hooks.
 
 Use the level picker and text search to filter output, the arrow buttons to
 recall command history, and Clear to discard the selected tab's log. Each tab

@@ -7,7 +7,25 @@ struct ConsoleEntry: Identifiable {
     let id = UUID()
     let date = Date()
     let level: String
+    let method: String
     let message: String
+
+    init(level: String, method: String? = nil, message: String) {
+        self.level = level
+        self.method = method ?? level
+        self.message = message
+    }
+}
+
+struct ConsoleCaptureModules: Equatable {
+    var messages: Bool
+    var pageErrors: Bool
+    var assertionsAndTraces: Bool
+    var objectsAndTables: Bool
+    var counters: Bool
+    var timers: Bool
+    var groups: Bool
+    var performance: Bool
 }
 
 enum ConsoleLevelFilter: String, CaseIterable, Identifiable {
@@ -162,8 +180,8 @@ final class BrowserTab: ObservableObject, Identifiable {
         isLoading = webView.isLoading
     }
 
-    func appendConsole(level: String, message: String) {
-        consoleEntries.append(ConsoleEntry(level: level, message: message))
+    func appendConsole(level: String, method: String? = nil, message: String) {
+        consoleEntries.append(ConsoleEntry(level: level, method: method, message: message))
         if consoleEntries.count > 500 {
             consoleEntries.removeFirst(consoleEntries.count - 500)
         }
@@ -358,6 +376,42 @@ final class BrowserModel: ObservableObject {
             resetAllWebViews()
         }
     }
+    @Published var consoleEvaluationEnabled = true {
+        didSet { UserDefaults.standard.set(consoleEvaluationEnabled, forKey: "consoleEvaluationEnabled") }
+    }
+    @Published var consoleMessagesEnabled = true {
+        didSet { persistConsoleCapture(consoleMessagesEnabled, key: "consoleMessagesEnabled") }
+    }
+    @Published var consolePageErrorsEnabled = true {
+        didSet { persistConsoleCapture(consolePageErrorsEnabled, key: "consolePageErrorsEnabled") }
+    }
+    @Published var consoleDiagnosticsEnabled = true {
+        didSet { persistConsoleCapture(consoleDiagnosticsEnabled, key: "consoleDiagnosticsEnabled") }
+    }
+    @Published var consoleObjectsEnabled = true {
+        didSet { persistConsoleCapture(consoleObjectsEnabled, key: "consoleObjectsEnabled") }
+    }
+    @Published var consoleCountersEnabled = true {
+        didSet { persistConsoleCapture(consoleCountersEnabled, key: "consoleCountersEnabled") }
+    }
+    @Published var consoleTimersEnabled = true {
+        didSet { persistConsoleCapture(consoleTimersEnabled, key: "consoleTimersEnabled") }
+    }
+    @Published var consoleGroupsEnabled = true {
+        didSet { persistConsoleCapture(consoleGroupsEnabled, key: "consoleGroupsEnabled") }
+    }
+    @Published var consolePerformanceEnabled = true {
+        didSet { persistConsoleCapture(consolePerformanceEnabled, key: "consolePerformanceEnabled") }
+    }
+    @Published var javaScriptAlertEnabled = true {
+        didSet { UserDefaults.standard.set(javaScriptAlertEnabled, forKey: "javaScriptAlertEnabled") }
+    }
+    @Published var javaScriptConfirmEnabled = true {
+        didSet { UserDefaults.standard.set(javaScriptConfirmEnabled, forKey: "javaScriptConfirmEnabled") }
+    }
+    @Published var javaScriptPromptEnabled = true {
+        didSet { UserDefaults.standard.set(javaScriptPromptEnabled, forKey: "javaScriptPromptEnabled") }
+    }
     @Published var networkInspectionEnabled = false {
         didSet {
             UserDefaults.standard.set(networkInspectionEnabled, forKey: "networkInspectionEnabled")
@@ -411,6 +465,18 @@ final class BrowserModel: ObservableObject {
         if defaults.object(forKey: "consoleEnabled") != nil {
             consoleEnabled = defaults.bool(forKey: "consoleEnabled")
         }
+        consoleEvaluationEnabled = defaults.value(default: true, forKey: "consoleEvaluationEnabled")
+        consoleMessagesEnabled = defaults.value(default: true, forKey: "consoleMessagesEnabled")
+        consolePageErrorsEnabled = defaults.value(default: true, forKey: "consolePageErrorsEnabled")
+        consoleDiagnosticsEnabled = defaults.value(default: true, forKey: "consoleDiagnosticsEnabled")
+        consoleObjectsEnabled = defaults.value(default: true, forKey: "consoleObjectsEnabled")
+        consoleCountersEnabled = defaults.value(default: true, forKey: "consoleCountersEnabled")
+        consoleTimersEnabled = defaults.value(default: true, forKey: "consoleTimersEnabled")
+        consoleGroupsEnabled = defaults.value(default: true, forKey: "consoleGroupsEnabled")
+        consolePerformanceEnabled = defaults.value(default: true, forKey: "consolePerformanceEnabled")
+        javaScriptAlertEnabled = defaults.value(default: true, forKey: "javaScriptAlertEnabled")
+        javaScriptConfirmEnabled = defaults.value(default: true, forKey: "javaScriptConfirmEnabled")
+        javaScriptPromptEnabled = defaults.value(default: true, forKey: "javaScriptPromptEnabled")
         if defaults.object(forKey: "networkInspectionEnabled") != nil {
             networkInspectionEnabled = defaults.bool(forKey: "networkInspectionEnabled")
         }
@@ -434,6 +500,19 @@ final class BrowserModel: ObservableObject {
 
     var selectedTab: BrowserTab {
         tabs.first(where: { $0.id == selectedTabID }) ?? tabs[0]
+    }
+
+    var consoleCaptureModules: ConsoleCaptureModules {
+        ConsoleCaptureModules(
+            messages: consoleMessagesEnabled,
+            pageErrors: consolePageErrorsEnabled,
+            assertionsAndTraces: consoleDiagnosticsEnabled,
+            objectsAndTables: consoleObjectsEnabled,
+            counters: consoleCountersEnabled,
+            timers: consoleTimersEnabled,
+            groups: consoleGroupsEnabled,
+            performance: consolePerformanceEnabled
+        )
     }
 
     func navigate() {
@@ -577,6 +656,19 @@ final class BrowserModel: ObservableObject {
         for tab in tabs {
             tab.recoverWebContent()
         }
+    }
+
+    private func persistConsoleCapture(_ value: Bool, key: String) {
+        UserDefaults.standard.set(value, forKey: key)
+        if consoleEnabled {
+            resetAllWebViews()
+        }
+    }
+}
+
+private extension UserDefaults {
+    func value(default defaultValue: Bool, forKey key: String) -> Bool {
+        object(forKey: key) == nil ? defaultValue : bool(forKey: key)
     }
 }
 

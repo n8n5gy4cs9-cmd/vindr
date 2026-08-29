@@ -73,3 +73,9 @@
   - [x] Preserve the original sheet-based Notes, Developer Tools, and Settings presentation.
   - [x] Keep all existing features accessible.
   - [x] Add `ui-guide.md` and synchronize feature/manual guidance.
+- [x] Task 15: complete, modular JavaScript console support.
+  - [x] Add independently toggleable native `alert`, `confirm`, and `prompt` callbacks.
+  - [x] Capture the complete standard Console API through independently toggleable modules.
+  - [x] Add a dedicated JavaScript Modules settings page.
+  - [x] Regression-test JavaScript callbacks, console modules, and disabled-overhead behavior.
+  - [x] Synchronize feature and user documentation and build successfully (`swift build`).

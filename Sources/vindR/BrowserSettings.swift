@@ -4,6 +4,7 @@ struct BrowserSettingsView: View {
     @ObservedObject var browser: BrowserModel
     @Environment(\.dismiss) private var dismiss
     @State private var confirmDataClear = false
+    @State private var javaScriptSettingsPresented = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -58,6 +59,9 @@ struct BrowserSettingsView: View {
 
                 Section("Developer Features") {
                     Toggle("JavaScript console", isOn: $browser.consoleEnabled)
+                    Button("JavaScript Modules…") {
+                        javaScriptSettingsPresented = true
+                    }
                     Toggle("Network inspector", isOn: $browser.networkInspectionEnabled)
                     Toggle("Application storage inspector", isOn: $browser.applicationInspectionEnabled)
                     Text("Developer features are off by default. Console and network capture inject page hooks only while enabled; changing either setting reloads open tabs.")
@@ -116,6 +120,9 @@ struct BrowserSettingsView: View {
             Button("Clear Website Data", role: .destructive, action: browser.clearWebsiteData)
         } message: {
             Text("Websites will sign out and open tabs will reload. This cannot be undone.")
+        }
+        .sheet(isPresented: $javaScriptSettingsPresented) {
+            JavaScriptSettingsView(browser: browser)
         }
     }
 }

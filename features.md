@@ -45,7 +45,11 @@
 
 - Opt-in JavaScript console
 - JavaScript evaluation in the current page
-- Console capture for log, info, warning, error, debug, uncaught errors, and rejected promises
+- Independently toggleable JavaScript command evaluation
+- Native, independently toggleable `alert`, `confirm`, and `prompt` dialogs
+- Complete standard Console API capture: messages/clear, assertions/traces, objects/tables, counters, timers, and groups
+- Optional capture for WebKit profiling and timestamp console extensions
+- Independently toggleable uncaught-error and rejected-promise capture
 - Console timestamps, level filters, text search, clear action, and command history
 - Console entries preserved across reloads and redirects
 - Opt-in Network inspector
@@ -77,5 +81,6 @@
 - Persistent search-engine setting
 - Persistent background-freeze setting
 - Persistent Console, Network, and Application inspector settings
+- Dedicated JavaScript Modules settings page with persistent per-module controls
 - Website-data clearing with confirmation
 - Keyboard-shortcut reference

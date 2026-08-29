@@ -76,7 +76,8 @@ Open Developer Tools with the tools button or Command-Option-I.
 
 The Console is disabled by default. Enable it in Settings or inside the Console view.
 
-- Captures log, info, warning, error, and debug messages.
+- Captures the complete standard Console API: log/info/warn/error/debug/clear, assert/trace, dir/dirxml/table, count/countReset, time/timeLog/timeEnd, and group/groupCollapsed/groupEnd.
+- Optionally captures WebKit's profile/profileEnd/timeStamp extensions.
 - Captures uncaught errors and unhandled promise rejections.
 - Evaluates JavaScript commands in the current page.
 - Filters by level or text.
@@ -84,6 +85,16 @@ The Console is disabled by default. Enable it in Settings or inside the Console 
 - Preserves messages across reloads and redirects until cleared.
 
 Console capture adds page hooks only while enabled. Changing the setting reloads open tabs.
+
+Use **JavaScript Modules…** in Settings or the switch-controls button in the Console toolbar to configure every module independently. Command evaluation, message families, errors, diagnostics, objects, counters, timers, groups, and performance markers each have their own persistent toggle. A disabled capture module injects no hooks.
+
+The same page controls native JavaScript dialogs independently:
+
+- `alert()` shows an OK sheet.
+- `confirm()` shows OK/Cancel and returns the choice.
+- `prompt()` shows a text field and returns its text or `null` when cancelled.
+
+If a dialog callback is disabled, alerts are silently acknowledged, confirmations return `false`, and prompts return `null`. Disable dialogs for sites that abuse modal prompts.
 
 ### Network
 

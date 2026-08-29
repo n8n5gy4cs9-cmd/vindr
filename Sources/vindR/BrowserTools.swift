@@ -200,6 +200,7 @@ private struct ConsoleToolView: View {
     @State private var search = ""
     @State private var command = ""
     @State private var historyOffset = 0
+    @State private var javaScriptSettingsPresented = false
 
     private static let timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -223,6 +224,10 @@ private struct ConsoleToolView: View {
                     Toggle("Console", isOn: $browser.consoleEnabled)
                         .toggleStyle(.switch)
                         .fixedSize()
+                    Button(action: { javaScriptSettingsPresented = true }) {
+                        Image(systemName: "switch.2")
+                    }
+                    .help("JavaScript Modules")
                     Picker("Level", selection: $levelFilter) {
                         ForEach(ConsoleLevelFilter.allCases) { filter in
                             Text(filter.rawValue).tag(filter)
@@ -271,6 +276,7 @@ private struct ConsoleToolView: View {
                         .textFieldStyle(.roundedBorder)
                         .font(.system(.body, design: .monospaced))
                         .onSubmit(runCommand)
+                        .disabled(!browser.consoleEvaluationEnabled)
                     Button(action: previousCommand) { Image(systemName: "chevron.up") }
                         .help("Previous command")
                         .disabled(tab.consoleCommandHistory.isEmpty)
@@ -279,10 +285,16 @@ private struct ConsoleToolView: View {
                         .disabled(historyOffset == 0)
                     Button("Run", action: runCommand)
                         .keyboardShortcut(.return, modifiers: .command)
-                        .disabled(command.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                        .disabled(
+                            !browser.consoleEvaluationEnabled
+                                || command.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                        )
                 }
                 .padding(10)
                 .background(Color.cyan.opacity(0.04))
+            }
+            .sheet(isPresented: $javaScriptSettingsPresented) {
+                JavaScriptSettingsView(browser: browser)
             }
         }
     }
@@ -295,6 +307,7 @@ private struct ConsoleToolView: View {
     }
 
     private func runCommand() {
+        guard browser.consoleEvaluationEnabled else { return }
         let input = command
         command = ""
         historyOffset = 0
@@ -326,7 +339,7 @@ private struct ConsoleEntryRow: View {
             Text(label)
                 .fontWeight(.semibold)
                 .foregroundStyle(color)
-                .frame(width: 58, alignment: .leading)
+                .frame(width: 74, alignment: .leading)
                 .padding(.horizontal, 5)
                 .padding(.vertical, 2)
                 .background(color.opacity(0.13))
@@ -347,7 +360,7 @@ private struct ConsoleEntryRow: View {
         switch entry.level {
         case "command": return "INPUT"
         case "result": return "RESULT"
-        default: return entry.level.uppercased()
+        default: return entry.method.uppercased()
         }
     }
 
@@ -831,55 +844,4 @@ private func toolPlaceholder(icon: String, title: String, detail: String) -> som
     }
     .padding()
     .frame(maxWidth: .infinity, maxHeight: .infinity)
-}
-
-final class PageConsoleMessageHandler: NSObject, WKScriptMessageHandler {
-    weak var tab: BrowserTab?
-
-    init(tab: BrowserTab) {
-        self.tab = tab
-    }
-
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        guard let payload = message.body as? [String: Any],
-              let text = payload["message"] as? String else { return }
-        let level = payload["level"] as? String ?? "log"
-        Task { @MainActor [weak tab] in
-            tab?.appendConsole(level: level, message: text)
-        }
-    }
-}
-
-enum PageConsoleCapture {
-    static let handlerName = "vindRConsole"
-    static let script = #"""
-    (() => {
-      if (window.__vindRConsoleInstalled) return;
-      window.__vindRConsoleInstalled = true;
-      const render = value => {
-        if (typeof value === 'string') return value;
-        if (value instanceof Error) return value.stack || value.message;
-        if (typeof value === 'undefined') return 'undefined';
-        if (typeof value === 'function') return value.toString();
-        try {
-          const json = JSON.stringify(value);
-          return typeof json === 'undefined' ? String(value) : json;
-        } catch (_) { return String(value); }
-      };
-      ['log', 'info', 'warn', 'error', 'debug'].forEach(level => {
-        const original = console[level];
-        console[level] = (...values) => {
-          try { window.webkit.messageHandlers.vindRConsole.postMessage({ level, message: values.map(render).join(' ') }); } catch (_) {}
-          original.apply(console, values);
-        };
-      });
-      window.addEventListener('error', event => {
-        const location = event.filename ? ` (${event.filename}:${event.lineno}:${event.colno})` : '';
-        try { window.webkit.messageHandlers.vindRConsole.postMessage({ level: 'error', message: event.message + location }); } catch (_) {}
-      });
-      window.addEventListener('unhandledrejection', event => {
-        try { window.webkit.messageHandlers.vindRConsole.postMessage({ level: 'error', message: 'Unhandled promise rejection: ' + render(event.reason) }); } catch (_) {}
-      });
-    })();
-    """#
 }

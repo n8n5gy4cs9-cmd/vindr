@@ -37,6 +37,92 @@ final class DeveloperCaptureTests: XCTestCase {
         XCTAssertEqual(allCapture.userScripts.count, 2)
     }
 
+    func testSelectiveConsoleModulesInstallOnlyTheirHooks() async throws {
+        let configuration = WKWebViewConfiguration()
+        let tab = BrowserTab(address: "about:blank")
+        DeveloperCapture.install(
+            in: configuration.userContentController,
+            tab: tab,
+            consoleEnabled: true,
+            consoleModules: ConsoleCaptureModules(
+                messages: false,
+                pageErrors: false,
+                assertionsAndTraces: false,
+                objectsAndTables: false,
+                counters: true,
+                timers: false,
+                groups: false,
+                performance: false
+            ),
+            networkEnabled: false
+        )
+        let webView = WKWebView(frame: .zero, configuration: configuration)
+        tab.retain(webView)
+
+        let navigation = NavigationWaiter(description: "selective console modules")
+        webView.navigationDelegate = navigation
+        webView.loadHTMLString("<script>console.log('hidden'); console.count('visible')</script>", baseURL: nil)
+        await fulfillment(of: [navigation.expectation], timeout: 3)
+        try await waitUntil { tab.consoleEntries.contains { $0.method == "count" } }
+
+        XCTAssertFalse(tab.consoleEntries.contains { $0.message.contains("hidden") })
+        XCTAssertTrue(tab.consoleEntries.contains { $0.method == "count" && $0.message == "visible: 1" })
+    }
+
+    func testCompleteStandardConsoleAPICapture() async throws {
+        let configuration = WKWebViewConfiguration()
+        let tab = BrowserTab(address: "about:blank")
+        DeveloperCapture.install(
+            in: configuration.userContentController,
+            tab: tab,
+            consoleEnabled: true,
+            networkEnabled: false
+        )
+        let webView = WKWebView(frame: .zero, configuration: configuration)
+        tab.retain(webView)
+
+        let navigation = NavigationWaiter(description: "complete console API")
+        webView.navigationDelegate = navigation
+        webView.loadHTMLString(
+            #"""
+            <body><script>
+            console.clear();
+            console.log('log'); console.info('info'); console.warn('warn');
+            console.error('error'); console.debug('debug');
+            console.assert(false, 'assertion'); console.trace('trace');
+            console.dir({answer: 42}); console.dirxml(document.body); console.table([{answer: 42}]);
+            console.count('counter'); console.countReset('counter');
+            console.time('timer'); console.timeLog('timer', 'lap'); console.timeEnd('timer');
+            console.group('group'); console.log('nested'); console.groupEnd();
+            </script></body>
+            """#,
+            baseURL: nil
+        )
+        await fulfillment(of: [navigation.expectation], timeout: 3)
+        let expectedMethods: Set<String> = [
+            "clear", "log", "info", "warn", "error", "debug", "assert", "trace",
+            "dir", "dirxml", "table", "count", "countReset", "timeLog", "timeEnd", "group"
+        ]
+        try await waitUntil { expectedMethods.isSubset(of: Set(tab.consoleEntries.map(\.method))) }
+
+        XCTAssertTrue(expectedMethods.isSubset(of: Set(tab.consoleEntries.map(\.method))))
+        XCTAssertTrue(tab.consoleEntries.contains { $0.message == "  nested" })
+    }
+
+    func testCoordinatorExposesAllJavaScriptDialogCallbacks() {
+        let coordinator = WebView.Coordinator(browser: BrowserModel(), tab: BrowserTab())
+
+        XCTAssertTrue(coordinator.responds(to: #selector(WKUIDelegate.webView(
+            _:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:
+        ))))
+        XCTAssertTrue(coordinator.responds(to: #selector(WKUIDelegate.webView(
+            _:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:completionHandler:
+        ))))
+        XCTAssertTrue(coordinator.responds(to: #selector(WKUIDelegate.webView(
+            _:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:
+        ))))
+    }
+
     func testConsoleLevelFilters() {
         let error = ConsoleEntry(level: "error", message: "broken")
         let warning = ConsoleEntry(level: "warn", message: "careful")
