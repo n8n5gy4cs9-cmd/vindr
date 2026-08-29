@@ -92,6 +92,10 @@ private enum VindRTheme {
     static let tabActive = Color(red: 44 / 255, green: 50 / 255, blue: 74 / 255)
     static let tabActiveBorder = Color(red: 70 / 255, green: 74 / 255, blue: 95 / 255)
     static let tabInactiveText = Color(red: 122 / 255, green: 125 / 255, blue: 140 / 255)
+    static let toolCardBackground = Color(red: 34 / 255, green: 44 / 255, blue: 72 / 255)
+    static let toolCardBorder = Color(red: 61 / 255, green: 70 / 255, blue: 91 / 255)
+    static let toolCardTitle = Color(red: 215 / 255, green: 216 / 255, blue: 220 / 255)
+    static let toolCardSubtitle = Color(red: 85 / 255, green: 92 / 255, blue: 111 / 255)
 
     static var windowGradient: some View {
         ZStack {
@@ -686,23 +690,18 @@ private struct SidebarCardButton: View {
                 VStack(alignment: .leading, spacing: 5) {
                     Text(title)
                         .font(.system(size: fontSize, weight: .medium))
-                        .foregroundStyle(Color.white.opacity(0.82))
+                        .foregroundStyle(VindRTheme.toolCardTitle)
                     Text(detail)
                         .font(.system(size: max(8, fontSize - 2)))
-                        .foregroundStyle(Color.white.opacity(0.35))
+                        .foregroundStyle(VindRTheme.toolCardSubtitle)
                         .lineLimit(2)
                 }
                 Spacer(minLength: 0)
             }
             .padding(10)
             .frame(maxWidth: .infinity, minHeight: 58, alignment: .topLeading)
-            .background {
-                ZStack {
-                    VindRTheme.cardGradient
-                    RoundedRectangle(cornerRadius: 7).fill(.ultraThinMaterial).opacity(0.45)
-                }
-            }
-            .overlay(RoundedRectangle(cornerRadius: 7).stroke(Color.white.opacity(0.08), lineWidth: 1))
+            .background(VindRTheme.toolCardBackground, in: RoundedRectangle(cornerRadius: 7))
+            .overlay(RoundedRectangle(cornerRadius: 7).stroke(VindRTheme.toolCardBorder, lineWidth: 1))
             .shadow(color: Color.black.opacity(0.3), radius: 6)
         }
         .buttonStyle(.plain)

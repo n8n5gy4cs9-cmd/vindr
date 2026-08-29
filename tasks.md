@@ -141,3 +141,5 @@
   - [x] Add a persistent Settings override and Reset action.
   - [x] Add a human-editable fallback configuration file inside the app bundle.
   - [x] Document, test, package, and verify the release build.
+- [x] Task 29: exact Tools-card palette.
+  - [x] Apply the supplied card background, border, title, and subtitle RGB values to every sidebar Tools card.
