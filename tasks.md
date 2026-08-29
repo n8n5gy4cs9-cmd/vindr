@@ -96,3 +96,9 @@
   - [x] Add a persistent setting that keeps the tab strip visible when the toolbar is hidden.
   - [x] Synchronize feature and user documentation.
   - [x] Build successfully (`swift build`).
+- [x] Task 19: non-modal Developer Tools presentations.
+  - [x] Preserve the existing Developer Tools sheet as the default.
+  - [x] Add a resizable side panel that keeps the current web page and browser controls usable.
+  - [x] Add a separate Developer Tools window backed by the same selected-tab data.
+  - [x] Add persistent presentation selection in Settings and direct choices in the Browser menu.
+  - [x] Synchronize feature and user documentation and build successfully (`swift build`).

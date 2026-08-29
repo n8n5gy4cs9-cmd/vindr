@@ -101,6 +101,11 @@ Website-data clearing does not remove this file.
 ### Developer Tools
 
 Open Developer Tools with the tools button or Command-Option-I.
+The default native sheet remains available. Settings → Developer Features can
+instead open the tools in a resizable side panel or a separate native window,
+and the Browser menu offers direct commands for each mode. The side panel and
+separate window keep the current page and toolbar interactive for live reloads,
+navigation, and console/network observation.
 
 #### Console
 

@@ -146,6 +146,8 @@ final class BrowserToolsModel: ObservableObject {
 struct BrowserToolsView: View {
     @ObservedObject var browser: BrowserModel
     @ObservedObject var tools: BrowserToolsModel
+    var minimumWidth: CGFloat = 680
+    var closeAction: (() -> Void)?
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -160,7 +162,7 @@ struct BrowserToolsView: View {
                 .frame(maxWidth: 560)
 
                 Spacer()
-                Button("Done") { dismiss() }
+                Button("Done", action: close)
                     .keyboardShortcut(.cancelAction)
             }
             .padding()
@@ -189,7 +191,15 @@ struct BrowserToolsView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .frame(minWidth: 680, minHeight: 440)
+        .frame(minWidth: minimumWidth, minHeight: 440)
+    }
+
+    private func close() {
+        if let closeAction {
+            closeAction()
+        } else {
+            dismiss()
+        }
     }
 }
 

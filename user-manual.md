@@ -72,6 +72,8 @@ Notes are stored at `~/Library/Application Support/vindR/Notes.json` and remain 
 
 Open Developer Tools with the tools button or Command-Option-I.
 
+Choose **Sheet**, **Side Panel**, or **Separate Window** under Settings → Developer Features. The existing sheet remains the default. Side Panel places a resizable tools area beside the current page, while Separate Window opens the same tools in their own native window. Both non-modal modes leave the browser toolbar and page usable, so you can reload or navigate while watching Console or Network output. The Browser menu also provides direct **Open Developer Tools In** commands for all three modes.
+
 ### Console
 
 The Console is disabled by default. Enable it in Settings or inside the Console view.

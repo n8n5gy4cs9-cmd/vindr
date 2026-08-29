@@ -1,6 +1,10 @@
 import AppKit
 import SwiftUI
 
+enum DeveloperToolsWindow {
+    static let id = "developer-tools"
+}
+
 @main
 struct VindRApp: App {
     @StateObject private var browser = BrowserModel()
@@ -24,11 +28,18 @@ struct VindRApp: App {
         .commands {
             BrowserCommands(browser: browser)
         }
+
+        Window("Developer Tools", id: DeveloperToolsWindow.id) {
+            BrowserToolsView(browser: browser, tools: browser.tools)
+                .preferredColorScheme(.dark)
+        }
+        .defaultSize(width: 900, height: 650)
     }
 }
 
 private struct BrowserCommands: Commands {
     @ObservedObject var browser: BrowserModel
+    @Environment(\.openWindow) private var openWindow
 
     var body: some Commands {
         CommandMenu("Browser") {
@@ -49,8 +60,15 @@ private struct BrowserCommands: Commands {
             }
             .keyboardShortcut("r", modifiers: [.command, .shift])
             Divider()
-            Button("Developer Tools") { browser.toolsPresented = true }
+            Button("Developer Tools") { openDeveloperTools() }
                 .keyboardShortcut("i", modifiers: [.command, .option])
+            Menu("Open Developer Tools In") {
+                ForEach(DeveloperToolsPresentation.allCases) { presentation in
+                    Button(presentation.name) {
+                        openDeveloperTools(presentation)
+                    }
+                }
+            }
             Button("Notes and Sketchpad") { browser.notesPresented = true }
                 .keyboardShortcut("n", modifiers: [.command, .shift])
             Button("Settings…") { browser.settingsPresented = true }
@@ -60,6 +78,13 @@ private struct BrowserCommands: Commands {
                 browser.toolbarHidden.toggle()
             }
             .keyboardShortcut("t", modifiers: [.command, .shift])
+        }
+    }
+
+    private func openDeveloperTools(_ presentation: DeveloperToolsPresentation? = nil) {
+        browser.prepareDeveloperTools(presentation)
+        if browser.developerToolsPresentation == .window {
+            openWindow(id: DeveloperToolsWindow.id)
         }
     }
 }

@@ -65,13 +65,18 @@ struct BrowserSettingsView: View {
                 }
 
                 Section("Developer Features") {
+                    Picker("Open Developer Tools in", selection: $browser.developerToolsPresentation) {
+                        ForEach(DeveloperToolsPresentation.allCases) { presentation in
+                            Text(presentation.name).tag(presentation)
+                        }
+                    }
                     Toggle("JavaScript console", isOn: $browser.consoleEnabled)
                     Button("JavaScript Modules…") {
                         javaScriptSettingsPresented = true
                     }
                     Toggle("Network inspector", isOn: $browser.networkInspectionEnabled)
                     Toggle("Application storage inspector", isOn: $browser.applicationInspectionEnabled)
-                    Text("Developer features are off by default. Console and network capture inject page hooks only while enabled; changing either setting reloads open tabs.")
+                    Text("Side Panel and Separate Window keep the current page available while you use the tools. Developer features are off by default. Console and network capture inject page hooks only while enabled; changing either setting reloads open tabs.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }

@@ -15,7 +15,20 @@ struct BrowserView: View {
             if !browser.toolbarHidden || !browser.hideTabStripWithToolbar {
                 TabStripView(browser: browser)
             }
-            BrowserPage(browser: browser, tab: browser.selectedTab)
+            HSplitView {
+                BrowserPage(browser: browser, tab: browser.selectedTab)
+                    .frame(minWidth: 320)
+
+                if browser.toolsSidePanelPresented {
+                    BrowserToolsView(
+                        browser: browser,
+                        tools: browser.tools,
+                        minimumWidth: 480,
+                        closeAction: { browser.toolsSidePanelPresented = false }
+                    )
+                    .frame(idealWidth: 560, maxWidth: 720)
+                }
+            }
         }
         .tint(VindRTheme.accentCyan)
         .background(VindRTheme.windowGradient)
@@ -232,6 +245,7 @@ private struct ToolbarView: View {
     @ObservedObject var browser: BrowserModel
     @ObservedObject var tab: BrowserTab
     let addressFocused: FocusState<Bool>.Binding
+    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
         HStack(spacing: 10) {
@@ -326,11 +340,11 @@ private struct ToolbarView: View {
             .help("Private: nonPersistent")
             .onAppear { ledPulsing = true }
 
-            Button(action: { browser.toolsPresented = true }) {
+            Button(action: openDeveloperTools) {
                 Image(systemName: "wrench.and.screwdriver")
                     .foregroundStyle(.orange)
             }
-            .help("Developer Tools (Cmd-Option-I)")
+            .help("Developer Tools in \(browser.developerToolsPresentation.name) (Cmd-Option-I)")
 
             Button(action: { browser.notesPresented = true }) {
                 Image(systemName: "square.and.pencil")
@@ -381,6 +395,13 @@ private struct ToolbarView: View {
             tab.webView?.stopLoading()
         } else {
             tab.webView?.reload()
+        }
+    }
+
+    private func openDeveloperTools() {
+        browser.prepareDeveloperTools()
+        if browser.developerToolsPresentation == .window {
+            openWindow(id: DeveloperToolsWindow.id)
         }
     }
 }

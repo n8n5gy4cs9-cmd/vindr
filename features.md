@@ -44,6 +44,8 @@
 ## Developer Tools
 
 
+- Sheet, resizable side-panel, and separate-window presentation modes
+- Live page navigation and reload while Developer Tools remain visible in the side panel or separate window
 - Opt-in JavaScript console
 - JavaScript evaluation in the current page
 - Independently toggleable JavaScript command evaluation

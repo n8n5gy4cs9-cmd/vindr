@@ -101,6 +101,22 @@ enum SearchEngine: String, CaseIterable, Identifiable {
     }
 }
 
+enum DeveloperToolsPresentation: String, CaseIterable, Identifiable {
+    case sheet
+    case sidePanel
+    case window
+
+    var id: Self { self }
+
+    var name: String {
+        switch self {
+        case .sheet: return "Sheet"
+        case .sidePanel: return "Side Panel"
+        case .window: return "Separate Window"
+        }
+    }
+}
+
 @MainActor
 final class BrowserTab: ObservableObject, Identifiable {
     let id = UUID()
@@ -441,7 +457,13 @@ final class BrowserModel: ObservableObject {
             rescheduleBackgroundFreezes()
         }
     }
+    @Published var developerToolsPresentation = DeveloperToolsPresentation.sheet {
+        didSet {
+            UserDefaults.standard.set(developerToolsPresentation.rawValue, forKey: "developerToolsPresentation")
+        }
+    }
     @Published var toolsPresented = false
+    @Published var toolsSidePanelPresented = false
     @Published var notesPresented = false
     @Published var settingsPresented = false
     @Published private(set) var dataClearing = false
@@ -500,6 +522,17 @@ final class BrowserModel: ObservableObject {
                 freezeMinutes = storedMinutes
             }
         }
+        if let value = defaults.string(forKey: "developerToolsPresentation"),
+           let presentation = DeveloperToolsPresentation(rawValue: value) {
+            developerToolsPresentation = presentation
+        }
+    }
+
+    func prepareDeveloperTools(_ presentation: DeveloperToolsPresentation? = nil) {
+        let presentation = presentation ?? developerToolsPresentation
+        developerToolsPresentation = presentation
+        toolsPresented = presentation == .sheet
+        toolsSidePanelPresented = presentation == .sidePanel
     }
 
     var selectedTab: BrowserTab {
