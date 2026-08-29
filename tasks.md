@@ -136,3 +136,8 @@
 - [x] Task 27: prevent title-bar background bleed.
   - [x] Stop the full-window navy gradient from covering the native title-bar safe area.
   - [x] Extend solid `rgb(52, 59, 83)` behind the traffic lights in visible and collapsed states.
+- [x] Task 28: configurable starting page.
+  - [x] Default initial and new tabs to `https://softa.site/launchpad/`.
+  - [x] Add a persistent Settings override and Reset action.
+  - [x] Add a human-editable fallback configuration file inside the app bundle.
+  - [x] Document, test, package, and verify the release build.

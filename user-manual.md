@@ -26,6 +26,7 @@ The local build script does not apply a Developer ID signature or notarize vindR
 ## Tabs
 
 - Click **+** or press Command-T to create a tab.
+- Initial and new tabs open the starting page configured in Settings. The default is `https://softa.site/launchpad/`.
 - Click a tab title to select it.
 - Click **×** or press Command-W to close the selected tab when another tab is available.
 - Links using `target="_blank"` and pages using `window.open` open in a vindR tab.
@@ -138,6 +139,7 @@ Settings includes:
 - Unrestricted browsing
 - Dark-page styling
 - Search-engine selection
+- Starting-page URL and Reset to Bundled Starting Page
 - Background-tab freeze timing
 - Whether hiding the toolbar also hides the tab strip
 - Sidebar visibility and optional sidebar tabs
@@ -146,6 +148,16 @@ Settings includes:
 - JavaScript Console, Network, and Application inspector toggles
 - Website-data clearing
 - Keyboard-shortcut reference
+
+### Bundled Starting-Page Fallback
+
+The distributable app contains a human-editable fallback at:
+
+`vindR.app/vindR_vindR.bundle/StartPage.txt`
+
+Close vindR before editing that file. Put one complete `http://` or `https://` URL in the file, reopen vindR, and click **Reset to Bundled Starting Page** in Settings to remove any saved override and load the edited value. A missing or invalid file falls back to `https://softa.site/launchpad/`.
+
+Changing files inside a signed application invalidates its code signature. The provided local build is unsigned; if a future distribution is signed, prefer the Settings override instead of editing the bundle.
 
 ## Keyboard Shortcuts
 

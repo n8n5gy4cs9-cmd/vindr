@@ -368,6 +368,8 @@ final class BrowserTab: ObservableObject, Identifiable {
 
 @MainActor
 final class BrowserModel: ObservableObject {
+    static let fallbackStartPage = "https://softa.site/launchpad/"
+
     @Published private(set) var tabs: [BrowserTab]
     @Published var selectedTabID: UUID
     @Published var toolbarHidden = false
@@ -473,6 +475,9 @@ final class BrowserModel: ObservableObject {
     @Published var searchEngine = SearchEngine.duckDuckGo {
         didSet { UserDefaults.standard.set(searchEngine.rawValue, forKey: "searchEngine") }
     }
+    @Published var startPage = BrowserModel.fallbackStartPage {
+        didSet { UserDefaults.standard.set(startPage, forKey: "startPage") }
+    }
     @Published var freezeMinutes = 5 {
         didSet {
             UserDefaults.standard.set(freezeMinutes, forKey: "freezeMinutes")
@@ -497,11 +502,14 @@ final class BrowserModel: ObservableObject {
     let downloads = BrowserDownloadManager()
 
     init() {
-        let firstTab = BrowserTab()
+        let defaults = UserDefaults.standard
+        let configuredStartPage = defaults.string(forKey: "startPage") ?? Self.bundledStartPage
+        startPage = configuredStartPage
+
+        let firstTab = BrowserTab(address: Self.usableStartPage(configuredStartPage))
         tabs = [firstTab]
         selectedTabID = firstTab.id
 
-        let defaults = UserDefaults.standard
         hideTabStripWithToolbar = defaults.value(default: true, forKey: "hideTabStripWithToolbar")
         sidebarVisible = defaults.value(default: true, forKey: "sidebarVisible")
         tabsInSidebar = defaults.value(default: false, forKey: "tabsInSidebar")
@@ -579,6 +587,11 @@ final class BrowserModel: ObservableObject {
         tabs.compactMap(\.freezeDeadline).min()
     }
 
+    var bundledStartPageConfigPath: String {
+        Bundle.module.url(forResource: "StartPage", withExtension: "txt")?.path
+            ?? "StartPage.txt"
+    }
+
     var consoleCaptureModules: ConsoleCaptureModules {
         ConsoleCaptureModules(
             messages: consoleMessagesEnabled,
@@ -613,7 +626,7 @@ final class BrowserModel: ObservableObject {
 
     func newTab() {
         scheduleFreeze(selectedTab)
-        let tab = BrowserTab()
+        let tab = BrowserTab(address: Self.usableStartPage(startPage))
         tabs.append(tab)
         selectedTabID = tab.id
     }
@@ -660,6 +673,11 @@ final class BrowserModel: ObservableObject {
     func resetChromeAppearance() {
         chromeFontSize = 11
         toolbarHeight = 48
+    }
+
+    func resetStartPage() {
+        startPage = Self.bundledStartPage
+        UserDefaults.standard.removeObject(forKey: "startPage")
     }
 
     func applyAppearance(to webView: WKWebView) {
@@ -745,6 +763,25 @@ final class BrowserModel: ObservableObject {
         if consoleEnabled {
             resetAllWebViews()
         }
+    }
+
+    private static var bundledStartPage: String {
+        guard let url = Bundle.module.url(forResource: "StartPage", withExtension: "txt"),
+              let value = try? String(contentsOf: url, encoding: .utf8) else {
+            return fallbackStartPage
+        }
+        return usableStartPage(value)
+    }
+
+    static func usableStartPage(_ value: String) -> String {
+        let candidate = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let url = URL(string: candidate),
+              let scheme = url.scheme?.lowercased(),
+              ["http", "https"].contains(scheme),
+              url.host != nil else {
+            return fallbackStartPage
+        }
+        return candidate
     }
 }
 

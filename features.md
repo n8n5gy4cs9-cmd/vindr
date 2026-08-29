@@ -9,6 +9,8 @@
 
 - Native macOS browser powered by WebKit
 - URL navigation and web search from one location field
+- Configurable starting page for initial and new tabs
+- Editable bundled starting-page fallback with Settings reset
 - DuckDuckGo, Google, and Bing search-engine selection
 - Private-mode, back, forward, stop/reload, copy-current-URL, Go, and sidebar controls in the top bar
 - Configurable-height hideable top bar with native macOS window controls

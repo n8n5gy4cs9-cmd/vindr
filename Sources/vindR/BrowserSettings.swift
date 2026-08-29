@@ -73,6 +73,16 @@ struct BrowserSettingsView: View {
                     }
                 }
 
+                Section("Starting Page") {
+                    TextField("Starting page URL", text: $browser.startPage)
+                        .textFieldStyle(.roundedBorder)
+                    Button("Reset to Bundled Starting Page", action: browser.resetStartPage)
+                    Text("Initial and new tabs use this URL. The editable bundled fallback is at:\n\(browser.bundledStartPageConfigPath)\nRestart vindR after editing the file, then use Reset to load its value.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .textSelection(.enabled)
+                }
+
                 Section("Performance") {
                     Picker("Freeze background tabs", selection: $browser.freezeMinutes) {
                         Text("After 1 minute").tag(1)

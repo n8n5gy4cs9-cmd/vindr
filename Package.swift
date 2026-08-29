@@ -9,7 +9,8 @@ let package = Package(
             name: "vindR",
             resources: [
                 .copy("Resources/AppIcon.png"),
-                .copy("Resources/AppIcon.icns")
+                .copy("Resources/AppIcon.icns"),
+                .copy("Resources/StartPage.txt")
             ]
         ),
         .testTarget(name: "vindRTests", dependencies: ["vindR"])
