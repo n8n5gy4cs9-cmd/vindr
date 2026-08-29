@@ -37,7 +37,7 @@
 
 - Reversible dark-page styling
 - Sanitized local Reader view
-- Concept-matched native glass toolbar with layered navy gradients, focus glows, and cyan accents
+- Screenshot-matched native glass shell with full-window navy/cyan gradients, focus glows, and cyan accents
 - Native dark shell with blur and a 16:10 default window
 - Colored, formatted developer-tool output
 

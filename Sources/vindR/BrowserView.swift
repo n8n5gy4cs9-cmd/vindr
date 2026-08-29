@@ -29,9 +29,27 @@ struct BrowserView: View {
                     .frame(idealWidth: 560, maxWidth: 720)
                 }
             }
+            .background {
+                ZStack {
+                    VindRTheme.cardGradient
+                    Rectangle().fill(.ultraThinMaterial)
+                }
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .shadow(color: Color.black.opacity(0.3), radius: 6)
+            .padding(.horizontal, 4)
+            .padding(.bottom, 4)
         }
         .tint(VindRTheme.accentCyan)
-        .background(VindRTheme.windowGradient)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background {
+            VindRTheme.windowGradient
+                .ignoresSafeArea()
+        }
         .navigationTitle(browser.selectedTab.title)
         .onReceive(NotificationCenter.default.publisher(for: BrowserNotice.focusLocation)) { _ in
             addressFocused = true
@@ -90,13 +108,13 @@ private enum VindRTheme {
             RadialGradient(
                 colors: [bgTab.opacity(0.8), .clear],
                 center: .topLeading,
-                startRadius: 10,
+                startRadius: 0,
                 endRadius: 800
             )
             RadialGradient(
                 colors: [accentCyan.opacity(0.12), .clear],
                 center: .bottomTrailing,
-                startRadius: 10,
+                startRadius: 0,
                 endRadius: 600
             )
         }
@@ -116,6 +134,10 @@ private enum VindRTheme {
 
     static var activeTabGradient: LinearGradient {
         LinearGradient(colors: [bgTab.opacity(0.8), bgDeep], startPoint: .top, endPoint: .bottom)
+    }
+
+    static var cardGradient: LinearGradient {
+        LinearGradient(colors: [bgTab, bgDeep], startPoint: .topLeading, endPoint: .bottomTrailing)
     }
 
     static var activeTabBorderGradient: LinearGradient {
@@ -190,7 +212,7 @@ private struct TabItemView: View {
     var body: some View {
         HStack(spacing: 6) {
             Circle()
-                .fill(VindRTheme.accentBlue.opacity(isSelected ? 1 : 0.3))
+                .fill(VindRTheme.accentBlue)
                 .frame(width: 6, height: 6)
             Button(action: { browser.select(tab) }) {
                 Text(tab.title)
@@ -362,9 +384,9 @@ private struct ToolbarView: View {
                 .help("Hide toolbar (Cmd-Shift-T)")
         }
         .buttonStyle(ChromeButtonStyle())
-        .padding(.horizontal, 10)
         // Native macOS traffic lights remain visible via .hiddenTitleBar.
         .padding(.leading, 76)
+        .padding(.trailing, 10)
         .frame(height: 36)
         .background {
             ZStack {
@@ -489,7 +511,7 @@ private struct BrowserPage: View {
     var body: some View {
         WebView(browser: browser, tab: tab)
             .id("\(tab.id.uuidString)-\(tab.webViewGeneration)")
-            .background(Color(hex: "#1A1A1A"))
+            .background(VindRTheme.windowGradient)
     }
 }
 
@@ -521,7 +543,7 @@ struct WebView: NSViewRepresentable {
             networkEnabled: browser.networkInspectionEnabled
         )
         let webView = WKWebView(frame: .zero, configuration: configuration)
-        webView.underPageBackgroundColor = NSColor(red: 26 / 255, green: 26 / 255, blue: 26 / 255, alpha: 1)
+        webView.underPageBackgroundColor = NSColor(red: 5 / 255, green: 14 / 255, blue: 46 / 255, alpha: 1)
         webView.navigationDelegate = context.coordinator
         webView.uiDelegate = context.coordinator
         tab.retain(webView)

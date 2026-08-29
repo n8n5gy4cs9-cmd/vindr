@@ -102,3 +102,8 @@
   - [x] Add a separate Developer Tools window backed by the same selected-tab data.
   - [x] Add persistent presentation selection in Settings and direct choices in the Browser menu.
   - [x] Synchronize feature and user documentation and build successfully (`swift build`).
+- [x] Task 20: screenshot-matched theme fidelity.
+  - [x] Extend the layered navy/cyan window gradient through the hidden-title-bar area.
+  - [x] Match the custom toolbar inset, tab indicator, and WebKit under-page color to the target.
+  - [x] Give the main content surface the specified glass-card border and shadow treatment.
+  - [x] Keep browser behavior and `BrowserModel` unchanged.
