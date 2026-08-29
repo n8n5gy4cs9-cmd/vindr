@@ -18,8 +18,8 @@ The local build script does not apply a Developer ID signature or notarize vindR
 - Enter a full URL or a search phrase in the location field and press Return.
 - Use Back, Forward, Stop, and Reload beside the location field.
 - Choose DuckDuckGo, Google, or Bing under Settings.
-- Use the chevron at the right of the toolbar to hide it. Press Command-Shift-T to show it again.
-- The PRIVATE pill shows green for non-persistent private storage and red for persistent storage. Its menu controls privacy options.
+- Use the chevron at the right of the toolbar to hide the browser chrome. By default this hides both the address toolbar and tab strip. Press Command-Shift-T to show them again.
+- Click the PRIVATE pill to switch storage modes. It glows green for non-persistent private storage and red for persistent storage; the remaining privacy controls are in Settings.
 
 ## Tabs
 
@@ -40,10 +40,10 @@ Downloads continue when switching tabs. Click a completed status to dismiss it.
 
 ## Privacy and Site Access
 
-Open the shield menu in the toolbar for quick privacy controls.
+Click the PRIVATE pill in the toolbar to switch between private and persistent website storage. Open Settings for the remaining privacy controls.
 
 - **Block ads and trackers** enables vindR's native WebKit content rules.
-- **Private session** uses non-persistent website storage for the current session.
+- The **PRIVATE** toolbar pill uses non-persistent website storage while green and persistent storage while red.
 - **Enable JavaScript** controls page JavaScript.
 - **Darken pages** applies vindR's reversible dark-page styling.
 
@@ -129,6 +129,7 @@ Settings includes:
 - Dark-page styling
 - Search-engine selection
 - Background-tab freeze timing
+- Whether hiding the toolbar also hides the tab strip
 - JavaScript Console, Network, and Application inspector toggles
 - Website-data clearing
 - Keyboard-shortcut reference
@@ -146,7 +147,7 @@ Settings includes:
 | Command-Option-I | Open Developer Tools |
 | Command-Shift-N | Open Notes and Sketchpad |
 | Command-Comma | Open Settings |
-| Command-Shift-T | Show or hide the toolbar |
+| Command-Shift-T | Show or hide the browser chrome |
 
 ## Troubleshooting
 

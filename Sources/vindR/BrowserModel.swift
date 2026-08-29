@@ -351,6 +351,9 @@ final class BrowserModel: ObservableObject {
     @Published private(set) var tabs: [BrowserTab]
     @Published var selectedTabID: UUID
     @Published var toolbarHidden = false
+    @Published var hideTabStripWithToolbar = true {
+        didSet { UserDefaults.standard.set(hideTabStripWithToolbar, forKey: "hideTabStripWithToolbar") }
+    }
     @Published var blockingEnabled = true {
         didSet {
             UserDefaults.standard.set(blockingEnabled, forKey: "blockingEnabled")
@@ -453,6 +456,7 @@ final class BrowserModel: ObservableObject {
         selectedTabID = firstTab.id
 
         let defaults = UserDefaults.standard
+        hideTabStripWithToolbar = defaults.value(default: true, forKey: "hideTabStripWithToolbar")
         if defaults.object(forKey: "blockingEnabled") != nil {
             blockingEnabled = defaults.bool(forKey: "blockingEnabled")
         }

@@ -11,11 +11,12 @@
 - URL navigation and web search from one location field
 - DuckDuckGo, Google, and Bing search-engine selection
 - Back, forward, stop, reload, and copy-current-URL controls
-- Compact hideable toolbar
+- Compact 36-point hideable toolbar with native macOS window controls
+- Optional tab-strip retention while the address toolbar is hidden
 - Unified capsule location field with HTTPS, search-engine, and Reader indicators
 - Private-session LED status pill
 - Multiple tabs with create, select, and close controls
-- Navy/cyan tab styling and frozen-tab snowflake state
+- Deep-navy tab styling with a cyan active-tab accent
 - `target="_blank"` and `window.open` links opened in vindR tabs
 - Configurable background-tab freezing
 - Automatic WebKit content-process recovery
@@ -36,7 +37,7 @@
 
 - Reversible dark-page styling
 - Sanitized local Reader view
-- Colored tab strip and toolbar
+- Concept-matched native glass toolbar with layered navy gradients, focus glows, and cyan accents
 - Native dark shell with blur and a 16:10 default window
 - Colored, formatted developer-tool output
 
@@ -80,6 +81,7 @@
 - Persistent dark-page setting
 - Persistent search-engine setting
 - Persistent background-freeze setting
+- Persistent toolbar/tab-strip hiding preference
 - Persistent Console, Network, and Application inspector settings
 - Dedicated JavaScript Modules settings page with persistent per-module controls
 - Website-data clearing with confirmation

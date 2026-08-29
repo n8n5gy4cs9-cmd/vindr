@@ -20,6 +20,7 @@ struct VindRApp: App {
                 .preferredColorScheme(.dark)
         }
         .defaultSize(width: 1280, height: 800)
+        .windowStyle(.hiddenTitleBar)
         .commands {
             BrowserCommands(browser: browser)
         }

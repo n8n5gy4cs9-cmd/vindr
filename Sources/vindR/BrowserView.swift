@@ -7,16 +7,18 @@ struct BrowserView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            tabStrip
-            Divider()
             if !browser.toolbarHidden {
-                Toolbar(browser: browser, tab: browser.selectedTab, addressFocused: $addressFocused)
-                Divider()
+                ToolbarView(browser: browser, tab: browser.selectedTab, addressFocused: $addressFocused)
+            } else {
+                hiddenToolbarBar
+            }
+            if !browser.toolbarHidden || !browser.hideTabStripWithToolbar {
+                TabStripView(browser: browser)
             }
             BrowserPage(browser: browser, tab: browser.selectedTab)
         }
-        .tint(.cyan)
-        .background(Color(nsColor: .windowBackgroundColor))
+        .tint(VindRTheme.accentCyan)
+        .background(VindRTheme.windowGradient)
         .navigationTitle(browser.selectedTab.title)
         .onReceive(NotificationCenter.default.publisher(for: BrowserNotice.focusLocation)) { _ in
             addressFocused = true
@@ -36,38 +38,143 @@ struct BrowserView: View {
         }
     }
 
-    private var tabStrip: some View {
+    private var hiddenToolbarBar: some View {
+        HStack {
+            Spacer()
+            Button(action: { browser.toolbarHidden = false }) {
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 9, weight: .semibold))
+            }
+            .buttonStyle(ChromeButtonStyle())
+            .help("Show toolbar (Cmd-Shift-T)")
+        }
+        .padding(.horizontal, 10)
+        .frame(height: 20)
+        .background {
+            ZStack {
+                VindRTheme.toolbarGradient
+                Rectangle().fill(.ultraThinMaterial).opacity(0.6)
+            }
+        }
+        .overlay(alignment: .top) {
+            Rectangle().fill(Color.white.opacity(0.06)).frame(height: 1)
+        }
+    }
+}
+
+private enum VindRTheme {
+    static let bgDeep = Color(hex: "#050E2E")
+    static let bgTab = Color(hex: "#0A1B4D")
+    static let accentCyan = Color(hex: "#22F5C5")
+    static let accentBlue = Color(hex: "#2DD4FF")
+    static let accentBright = Color(hex: "#3A7BFF")
+    static let text = Color(hex: "#F0F4FF")
+    static let redLED = Color(hex: "#FF3B30")
+
+    static var windowGradient: some View {
+        ZStack {
+            bgDeep
+            RadialGradient(
+                colors: [bgTab.opacity(0.8), .clear],
+                center: .topLeading,
+                startRadius: 10,
+                endRadius: 800
+            )
+            RadialGradient(
+                colors: [accentCyan.opacity(0.12), .clear],
+                center: .bottomTrailing,
+                startRadius: 10,
+                endRadius: 600
+            )
+        }
+    }
+
+    static var toolbarGradient: LinearGradient {
+        LinearGradient(colors: [bgDeep, bgTab.opacity(0.9)], startPoint: .top, endPoint: .bottom)
+    }
+
+    static var tabStripGradient: LinearGradient {
+        LinearGradient(colors: [bgTab, bgDeep], startPoint: .top, endPoint: .bottom)
+    }
+
+    static var capsuleGradient: LinearGradient {
+        LinearGradient(colors: [bgTab, bgDeep], startPoint: .top, endPoint: .bottom)
+    }
+
+    static var activeTabGradient: LinearGradient {
+        LinearGradient(colors: [bgTab.opacity(0.8), bgDeep], startPoint: .top, endPoint: .bottom)
+    }
+
+    static var cyanBlueGradient: LinearGradient {
+        LinearGradient(colors: [accentCyan, accentBlue], startPoint: .leading, endPoint: .trailing)
+    }
+
+    static var borderGradient: LinearGradient {
+        LinearGradient(
+            colors: [Color.white.opacity(0.12), Color.white.opacity(0.04)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+}
+
+private extension Color {
+    init(hex: String) {
+        let value = UInt64(hex.trimmingCharacters(in: CharacterSet(charactersIn: "#")), radix: 16) ?? 0
+        self.init(
+            red: Double((value >> 16) & 0xFF) / 255,
+            green: Double((value >> 8) & 0xFF) / 255,
+            blue: Double(value & 0xFF) / 255
+        )
+    }
+}
+
+private struct TabStripView: View {
+    @ObservedObject var browser: BrowserModel
+
+    var body: some View {
         HStack(spacing: 3) {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 3) {
                     ForEach(browser.tabs) { tab in
-                        TabButton(browser: browser, tab: tab)
+                        TabItemView(browser: browser, tab: tab)
                     }
                 }
             }
             Button(action: browser.newTab) {
                 Image(systemName: "plus")
+                    .font(.system(size: 10, weight: .semibold))
             }
-            .buttonStyle(.borderless)
+            .buttonStyle(ChromeButtonStyle())
             .help("New Tab (Cmd-T)")
         }
         .padding(.horizontal, 8)
-        .padding(.vertical, 5)
-        .background(Color(red: 10 / 255, green: 27 / 255, blue: 77 / 255))
+        .frame(height: 32)
+        .background {
+            ZStack {
+                VindRTheme.tabStripGradient
+                Rectangle().fill(.ultraThinMaterial).opacity(0.4)
+            }
+        }
+        .overlay(alignment: .bottom) {
+            Rectangle().fill(Color.white.opacity(0.06)).frame(height: 1)
+        }
     }
 }
 
-private struct TabButton: View {
+private struct TabItemView: View {
     @ObservedObject var browser: BrowserModel
     @ObservedObject var tab: BrowserTab
 
     var body: some View {
-        HStack(spacing: 5) {
-            Image(systemName: tab.isFrozen ? "snowflake" : (tab.isLoading ? "circle.dotted" : "globe"))
-                .font(.system(size: tab.isFrozen ? 9 : 8, weight: .bold))
-                .foregroundStyle(tab.isLoading ? Color.orange : (isSelected ? Color.cyan : Color.secondary))
+        HStack(spacing: 6) {
+            Circle()
+                .fill(VindRTheme.accentBlue.opacity(isSelected ? 1 : 0.3))
+                .frame(width: 6, height: 6)
             Button(action: { browser.select(tab) }) {
                 Text(tab.title)
+                    .font(.system(size: 11, weight: isSelected ? .medium : .regular))
+                    .foregroundStyle(Color.white.opacity(isSelected ? 1 : 0.6))
                     .lineLimit(1)
                     .frame(maxWidth: 150, alignment: .leading)
             }
@@ -75,37 +182,51 @@ private struct TabButton: View {
             if browser.tabs.count > 1 {
                 Button(action: { browser.close(tab) }) {
                     Image(systemName: "xmark")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
+                        .font(.system(size: 8, weight: .bold))
+                        .foregroundStyle(Color.white.opacity(0.5))
+                        .frame(width: 16, height: 16)
                 }
                 .buttonStyle(.plain)
             }
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
+        .padding(.horizontal, 10)
+        .frame(height: 28)
         .background(
-            RoundedRectangle(cornerRadius: 5)
-                .fill(isSelected ? Color(red: 0.08, green: 0.22, blue: 0.44) : Color(red: 26 / 255, green: 42 / 255, blue: 90 / 255))
+            isSelected
+                ? VindRTheme.activeTabGradient
+                : LinearGradient(colors: [.clear], startPoint: .top, endPoint: .bottom),
+            in: RoundedRectangle(cornerRadius: 6)
         )
+        .overlay {
+            RoundedRectangle(cornerRadius: 6)
+                .stroke(
+                    isSelected
+                        ? VindRTheme.borderGradient
+                        : LinearGradient(colors: [.clear], startPoint: .top, endPoint: .bottom),
+                    lineWidth: 1
+                )
+        }
         .overlay(alignment: .bottom) {
             if isSelected {
-                Rectangle().fill(Color(red: 34 / 255, green: 245 / 255, blue: 197 / 255)).frame(height: 2)
-                    .padding(.horizontal, 7)
+                Rectangle()
+                    .fill(VindRTheme.cyanBlueGradient)
+                    .frame(height: 2)
+                    .shadow(color: VindRTheme.accentCyan.opacity(0.6), radius: 6)
             }
         }
-        .clipShape(RoundedRectangle(cornerRadius: 5))
+        .clipShape(RoundedRectangle(cornerRadius: 6))
     }
 
     private var isSelected: Bool { tab.id == browser.selectedTabID }
 }
 
-private struct Toolbar: View {
+private struct ToolbarView: View {
     @ObservedObject var browser: BrowserModel
     @ObservedObject var tab: BrowserTab
     let addressFocused: FocusState<Bool>.Binding
 
     var body: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: 10) {
             Button(action: { tab.webView?.goBack() }) { Image(systemName: "chevron.left") }
                 .disabled(!tab.canGoBack)
             Button(action: { tab.webView?.goForward() }) { Image(systemName: "chevron.right") }
@@ -119,27 +240,41 @@ private struct Toolbar: View {
 
             HStack(spacing: 6) {
                 Image(systemName: tab.address.hasPrefix("https://") ? "lock.fill" : "magnifyingglass")
-                    .font(.caption)
-                    .foregroundStyle(tab.address.hasPrefix("https://") ? .green : .secondary)
-                Image(systemName: "magnifyingglass.circle.fill")
-                    .foregroundStyle(.orange)
-                    .help(browser.searchEngine.name)
+                    .font(.system(size: 10))
+                    .foregroundStyle(tab.address.hasPrefix("https://") ? VindRTheme.accentBlue : Color.gray)
                 TextField("Search or enter address", text: $tab.address)
                     .textFieldStyle(.plain)
+                    .font(.system(size: 12))
+                    .foregroundStyle(VindRTheme.text)
                     .focused(addressFocused)
                     .onSubmit(browser.navigate)
-                Button(action: browser.toggleReader) {
-                    Image(systemName: tab.readerEnabled ? "doc.plaintext.fill" : "doc.plaintext")
-                        .foregroundStyle(tab.readerEnabled ? .cyan : .secondary)
+                Button(action: {
+                    tab.address = ""
+                    addressFocused.wrappedValue = true
+                }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(Color.gray)
                 }
+                .buttonStyle(.plain)
+                .opacity(tab.address.isEmpty ? 0 : 1)
+                Button(action: browser.toggleReader) {
+                    Image(systemName: "doc.richtext")
+                        .foregroundStyle(tab.readerEnabled ? VindRTheme.accentCyan : Color.gray)
+                }
+                .buttonStyle(.plain)
                 .disabled(!browser.javaScriptEnabled && !tab.readerEnabled)
                 .help(tab.readerEnabled ? "Exit Reader View" : "Reader View")
             }
-            .padding(.horizontal, 9)
-            .padding(.vertical, 5)
+            .padding(.horizontal, 12)
+            .frame(height: 28)
             .frame(maxWidth: 720)
-            .background(Color.black.opacity(0.24), in: Capsule())
-            .overlay(Capsule().stroke(Color.white.opacity(0.10)))
+            .background(VindRTheme.capsuleGradient, in: RoundedRectangle(cornerRadius: 8))
+            .overlay(RoundedRectangle(cornerRadius: 8).stroke(VindRTheme.borderGradient, lineWidth: 1))
+            .shadow(color: Color.black.opacity(0.4), radius: 4, x: 0, y: 2)
+            .shadow(
+                color: addressFocused.wrappedValue ? VindRTheme.accentCyan.opacity(0.15) : .clear,
+                radius: 8
+            )
 
             Button(action: browser.navigate) { Image(systemName: "arrow.right") }
                 .keyboardShortcut(.return, modifiers: [])
@@ -147,29 +282,41 @@ private struct Toolbar: View {
 
             DownloadStatusView(downloads: browser.downloads)
 
-            Menu {
-                Toggle("Block ads and trackers", isOn: $browser.blockingEnabled)
-                Toggle("Private session", isOn: $browser.privateMode)
-                Toggle("Enable JavaScript", isOn: $browser.javaScriptEnabled)
-                Divider()
-                Toggle("Darken pages", isOn: $browser.darkModeEnabled)
-            } label: {
+            Button(action: { browser.privateMode.toggle() }) {
                 HStack(spacing: 5) {
                     Circle()
-                        .fill(browser.privateMode ? Color.green : Color.red)
-                        .frame(width: 7, height: 7)
-                        .shadow(color: browser.privateMode ? .green : .red, radius: 4)
+                        .fill(privateStatusColor)
+                        .frame(width: 8, height: 8)
+                        .shadow(color: privateStatusColor.opacity(0.8), radius: 8)
+                        .shadow(color: privateStatusColor, radius: 3)
+                        .scaleEffect(ledPulsing ? 1.08 : 0.92)
+                        .animation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true), value: ledPulsing)
                     Text("PRIVATE")
-                        .font(.system(size: 9, weight: .bold))
-                    Image(systemName: browser.privateMode ? "lock.fill" : "lock.open")
-                        .font(.caption2)
+                        .font(.system(size: 9, weight: .bold, design: .monospaced))
+                        .foregroundStyle(browser.privateMode ? VindRTheme.accentCyan : Color.white.opacity(0.7))
+                        .lineLimit(1)
+                        .fixedSize(horizontal: true, vertical: false)
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 7))
+                        .foregroundStyle(Color.white.opacity(0.5))
                 }
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(Color.primary.opacity(0.08), in: Capsule())
+                .frame(width: 76, height: 24)
+                .background(
+                    LinearGradient(
+                        colors: [Color.black.opacity(0.6), Color.black.opacity(0.3)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    ),
+                    in: RoundedRectangle(cornerRadius: 6)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 6)
+                        .stroke(privateBorderGradient, lineWidth: 1)
+                )
             }
-            .menuStyle(.borderlessButton)
-            .help(browser.privateMode ? "Privacy: private session" : "Privacy and appearance")
+            .buttonStyle(.plain)
+            .help("Private: nonPersistent")
+            .onAppear { ledPulsing = true }
 
             Button(action: { browser.toolsPresented = true }) {
                 Image(systemName: "wrench.and.screwdriver")
@@ -192,10 +339,33 @@ private struct Toolbar: View {
             Button(action: { browser.toolbarHidden = true }) { Image(systemName: "chevron.up") }
                 .help("Hide toolbar (Cmd-Shift-T)")
         }
-        .buttonStyle(.borderless)
-        .padding(.horizontal, 8)
-        .padding(.vertical, 6)
-        .background(.ultraThinMaterial)
+        .buttonStyle(ChromeButtonStyle())
+        .padding(.horizontal, 10)
+        // Native macOS traffic lights remain visible via .hiddenTitleBar.
+        .padding(.leading, 76)
+        .frame(height: 36)
+        .background {
+            ZStack {
+                VindRTheme.toolbarGradient
+                Rectangle().fill(.ultraThinMaterial).opacity(0.6)
+            }
+        }
+    }
+
+    @State private var ledPulsing = false
+
+    private var privateStatusColor: Color {
+        browser.privateMode ? VindRTheme.accentCyan : VindRTheme.redLED
+    }
+
+    private var privateBorderGradient: LinearGradient {
+        LinearGradient(
+            colors: browser.privateMode
+                ? [VindRTheme.accentCyan.opacity(0.8), VindRTheme.accentBlue.opacity(0.8)]
+                : [Color.white.opacity(0.1), Color.white.opacity(0.03)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
     }
 
     private func stopOrReload() {
@@ -204,6 +374,41 @@ private struct Toolbar: View {
         } else {
             tab.webView?.reload()
         }
+    }
+}
+
+private struct ChromeButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        ChromeButtonBody(configuration: configuration)
+    }
+}
+
+private struct ChromeButtonBody: View {
+    let configuration: ChromeButtonStyle.Configuration
+    @State private var isHovered = false
+
+    var body: some View {
+        configuration.label
+            .font(.system(size: 11, weight: .medium))
+            .foregroundStyle(Color.white.opacity(0.8))
+            .frame(width: 24, height: 22)
+            .background(
+                LinearGradient(
+                    colors: configuration.isPressed
+                        ? [Color.white.opacity(0.15), Color.white.opacity(0.08)]
+                        : [Color.white.opacity(0.06), Color.white.opacity(0.02)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+            .overlay {
+                RoundedRectangle(cornerRadius: 5)
+                    .stroke(Color.white.opacity(isHovered ? 0.08 : 0), lineWidth: 1)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 5))
+            .shadow(color: Color.black.opacity(0.2), radius: 2, x: 0, y: 1)
+            .shadow(color: VindRTheme.accentCyan.opacity(isHovered ? 0.2 : 0), radius: 4)
+            .onHover { isHovered = $0 }
     }
 }
 
@@ -227,7 +432,13 @@ private struct DownloadStatusView: View {
                 }
             }
         }
-        .buttonStyle(.borderless)
+        .padding(.horizontal, 6)
+        .frame(minWidth: 24, minHeight: 22)
+        .background(VindRTheme.capsuleGradient, in: RoundedRectangle(cornerRadius: 6))
+        .overlay(RoundedRectangle(cornerRadius: 6).stroke(VindRTheme.borderGradient, lineWidth: 1))
+        .shadow(color: Color.black.opacity(0.3), radius: 3, x: 0, y: 1)
+        .shadow(color: statusColor.opacity(0.25), radius: 4)
+        .buttonStyle(.plain)
         .disabled(downloads.activeCount > 0)
         .help(downloads.message ?? "Downloads appear here")
     }
@@ -249,6 +460,7 @@ private struct BrowserPage: View {
     var body: some View {
         WebView(browser: browser, tab: tab)
             .id("\(tab.id.uuidString)-\(tab.webViewGeneration)")
+            .background(Color(hex: "#1A1A1A"))
     }
 }
 
@@ -268,6 +480,7 @@ struct WebView: NSViewRepresentable {
         }
 
         let configuration = WKWebViewConfiguration()
+        configuration.applicationNameForUserAgent = "vindR/0.1"
         configuration.websiteDataStore = browser.privateMode ? .nonPersistent() : .default()
         configuration.defaultWebpagePreferences.allowsContentJavaScript = browser.javaScriptEnabled
         configuration.preferences.isFraudulentWebsiteWarningEnabled = !browser.unrestrictedBrowsing
@@ -279,6 +492,7 @@ struct WebView: NSViewRepresentable {
             networkEnabled: browser.networkInspectionEnabled
         )
         let webView = WKWebView(frame: .zero, configuration: configuration)
+        webView.underPageBackgroundColor = NSColor(red: 26 / 255, green: 26 / 255, blue: 26 / 255, alpha: 1)
         webView.navigationDelegate = context.coordinator
         webView.uiDelegate = context.coordinator
         tab.retain(webView)

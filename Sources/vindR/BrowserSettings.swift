@@ -36,6 +36,13 @@ struct BrowserSettingsView: View {
                     Toggle("Darken web pages", isOn: $browser.darkModeEnabled)
                 }
 
+                Section("Browser Chrome") {
+                    Toggle("Hide tab strip with toolbar", isOn: $browser.hideTabStripWithToolbar)
+                    Text("When enabled, the toolbar hide button and Command-Shift-T hide both the address toolbar and tab strip.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
                 Section("Search") {
                     Picker("Search engine", selection: $browser.searchEngine) {
                         ForEach(SearchEngine.allCases) { engine in
@@ -101,8 +108,8 @@ struct BrowserSettingsView: View {
                     ShortcutHelpRow(action: "Developer Tools", shortcut: "⌥⌘I")
                     ShortcutHelpRow(action: "Notes and Sketchpad", shortcut: "⇧⌘N")
                     ShortcutHelpRow(action: "Settings", shortcut: "⌘,")
-                    ShortcutHelpRow(action: "Show or hide toolbar", shortcut: "⇧⌘T")
-                    Text("Use Show or hide toolbar to restore the address bar.")
+                    ShortcutHelpRow(action: "Show or hide browser chrome", shortcut: "⇧⌘T")
+                    Text("This restores the address toolbar and, when configured above, the tab strip.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }

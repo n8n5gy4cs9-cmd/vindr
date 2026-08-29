@@ -79,3 +79,19 @@
   - [x] Add a dedicated JavaScript Modules settings page.
   - [x] Regression-test JavaScript callbacks, console modules, and disabled-overhead behavior.
   - [x] Synchronize feature and user documentation and build successfully (`swift build`).
+- [x] Task 16: concept-matched browser shell theme.
+  - [x] Apply the deep-navy toolbar, URL capsule, private-status pill, and cyan active-tab styling.
+  - [x] Keep native traffic lights visible with a hidden title bar and safe toolbar inset.
+  - [x] Preserve browser behavior and synchronize feature and user documentation.
+  - [x] Build successfully (`swift build`).
+  - [x] Keep the PRIVATE pill label on one line at compact toolbar sizes.
+- [x] Task 17: glass and glow shell finish.
+  - [x] Add layered radial and linear gradients to the window, toolbar, tab strip, tabs, and capsules.
+  - [x] Add native material blur, focus and status glows, hover borders, and a pulsing privacy LED.
+  - [x] Keep browser behavior unchanged and synchronize the feature inventory.
+  - [x] Build successfully (`swift build`).
+- [x] Task 18: configurable tab-strip hiding.
+  - [x] Hide the tab strip with the toolbar by default.
+  - [x] Add a persistent setting that keeps the tab strip visible when the toolbar is hidden.
+  - [x] Synchronize feature and user documentation.
+  - [x] Build successfully (`swift build`).
