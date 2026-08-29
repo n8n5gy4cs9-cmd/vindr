@@ -10,9 +10,12 @@
 - Native macOS browser powered by WebKit
 - URL navigation and web search from one location field
 - DuckDuckGo, Google, and Bing search-engine selection
-- Back, forward, stop, reload, copy-current-URL, and Reader controls in a dedicated browser rail
-- Screenshot-matched 48-point hideable top bar with native macOS window controls
-- Session-style left rail with direct privacy, notes, tools, settings, and browser actions
+- Private-mode, back, forward, stop/reload, copy-current-URL, Go, and sidebar controls in the top bar
+- Configurable-height hideable top bar with native macOS window controls
+- Persistent compact restore control while the top bar is hidden
+- Hideable Tools sidebar with matching Notes, Developer Tools, Settings, and Help cards
+- Native in-app general guide and complete keyboard-shortcut reference
+- Optional tabs in the sidebar instead of the top tab row
 - Optional tab-strip retention while the address toolbar is hidden
 - Centered capsule location field with HTTPS state
 - Private-session LED status pill
@@ -20,7 +23,8 @@
 - Deep-navy tab styling with a cyan active-tab accent
 - `target="_blank"` and `window.open` links opened in vindR tabs
 - Configurable background-tab freezing
-- Visible freeze and JavaScript status badges in the tab row
+- Optional real-time background-freeze countdown in the tab row
+- Optional JavaScript status menu with runtime and console controls
 - Automatic WebKit content-process recovery
 - Native file downloads with destination selection
 - Download activity and completion status
@@ -86,6 +90,8 @@
 - Persistent search-engine setting
 - Persistent background-freeze setting
 - Persistent toolbar/tab-strip hiding preference
+- Persistent sidebar, status-badge, chrome-font, and toolbar-height preferences
+- Restore-defaults action for chrome font and toolbar height
 - Persistent Console, Network, and Application inspector settings
 - Dedicated JavaScript Modules settings page with persistent per-module controls
 - Website-data clearing with confirmation

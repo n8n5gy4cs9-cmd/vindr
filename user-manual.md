@@ -16,10 +16,12 @@ The local build script does not apply a Developer ID signature or notarize vindR
 ## Browse and Search
 
 - Enter a full URL or a search phrase in the location field and press Return.
-- Use Back, Forward, Stop/Reload, Copy URL, and Reader controls in the left browser rail.
+- Use Private/Personal, Back, Forward, Stop/Reload, and Copy URL from the left side of the top bar. Click **Go** or press Return to navigate.
+- Use the sidebar button immediately after **Go** to open or close the Tools sidebar.
+- Use Command-Shift-R or the Browser menu to toggle Reader view.
 - Choose DuckDuckGo, Google, or Bing under Settings.
-- Use the chevron at the bottom of the left rail to hide the browser chrome. By default this hides both the address toolbar and tab strip. Press Command-Shift-T to show them again.
-- Click the Private/Personal pill in the centered top bar, or the corresponding session in the left rail, to switch storage modes. The remaining privacy controls are in Settings.
+- Click the upward chevron in the top bar, use Command-Shift-T, or use the Browser menu to hide the browser chrome and expand the page. The compact bar remains visible with a downward chevron that restores the toolbar. By default hiding the toolbar also hides the tab strip.
+- Click the leftmost Private/Personal pill to switch storage modes. The remaining privacy controls are in Settings.
 
 ## Tabs
 
@@ -28,6 +30,8 @@ The local build script does not apply a Developer ID signature or notarize vindR
 - Click **×** or press Command-W to close the selected tab when another tab is available.
 - Links using `target="_blank"` and pages using `window.open` open in a vindR tab.
 - Background tabs freeze after the interval selected in Settings. A frozen tab restores its last URL, but temporary page state such as forms, media position, and history may be lost.
+- While a background tab is waiting to freeze, the optional status badge shows its real remaining time. The badge disappears when no freeze is scheduled.
+- Settings can move tabs from the top row into the sidebar.
 - If WebKit's content process stops, vindR recreates the affected tab automatically.
 
 ## Downloads
@@ -40,7 +44,7 @@ Downloads continue when switching tabs. Click a completed status to dismiss it.
 
 ## Privacy and Site Access
 
-Click the Private/Personal pill in the top bar, or the corresponding session in the left rail, to switch between private and persistent website storage. Open Settings for the remaining privacy controls.
+Click the leftmost Private/Personal pill in the top bar to switch between private and persistent website storage. Open Settings for the remaining privacy controls.
 
 - **Block ads and trackers** enables vindR's native WebKit content rules.
 - The **Private** state uses non-persistent website storage while green; **Personal** uses persistent storage.
@@ -67,6 +71,10 @@ Open Notes from the left rail or with Command-Shift-N.
 - **Sketch** supports pointer drawing, Undo, and Clear.
 
 Notes are stored at `~/Library/Application Support/vindR/Notes.json` and remain intact when website data is cleared.
+
+## In-App Help
+
+Open **Help** from the TOOLS sidebar for a general vindR guide, privacy and safety notes, and the complete keyboard-shortcut reference.
 
 ## Developer Tools
 
@@ -132,6 +140,9 @@ Settings includes:
 - Search-engine selection
 - Background-tab freeze timing
 - Whether hiding the toolbar also hides the tab strip
+- Sidebar visibility and optional sidebar tabs
+- Freeze-countdown and JavaScript-status badge visibility
+- Browser chrome font size and toolbar height, with Restore Chrome Defaults
 - JavaScript Console, Network, and Application inspector toggles
 - Website-data clearing
 - Keyboard-shortcut reference

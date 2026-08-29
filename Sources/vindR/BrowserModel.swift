@@ -133,6 +133,7 @@ final class BrowserTab: ObservableObject, Identifiable {
     @Published private(set) var applicationError: String?
     @Published private(set) var applicationLoading = false
     @Published private(set) var webViewGeneration = 0
+    @Published private(set) var freezeDeadline: Date?
 
     weak var webView: WKWebView?
     private var retainedWebView: WKWebView?
@@ -153,6 +154,7 @@ final class BrowserTab: ObservableObject, Identifiable {
 
     func scheduleFreeze(after seconds: UInt64 = 300) {
         freezeTask?.cancel()
+        freezeDeadline = Date().addingTimeInterval(TimeInterval(seconds))
         freezeTask = Task { [weak self] in
             try? await Task.sleep(nanoseconds: seconds * 1_000_000_000)
             guard !Task.isCancelled else { return }
@@ -163,9 +165,11 @@ final class BrowserTab: ObservableObject, Identifiable {
     func cancelFreeze() {
         freezeTask?.cancel()
         freezeTask = nil
+        freezeDeadline = nil
     }
 
     func releaseWebView() {
+        freezeDeadline = nil
         if let recoveryURL = readerOriginalURL ?? webView?.url {
             address = recoveryURL.absoluteString
         }
@@ -370,6 +374,24 @@ final class BrowserModel: ObservableObject {
     @Published var hideTabStripWithToolbar = true {
         didSet { UserDefaults.standard.set(hideTabStripWithToolbar, forKey: "hideTabStripWithToolbar") }
     }
+    @Published var sidebarVisible = true {
+        didSet { UserDefaults.standard.set(sidebarVisible, forKey: "sidebarVisible") }
+    }
+    @Published var tabsInSidebar = false {
+        didSet { UserDefaults.standard.set(tabsInSidebar, forKey: "tabsInSidebar") }
+    }
+    @Published var showFreezeStatus = true {
+        didSet { UserDefaults.standard.set(showFreezeStatus, forKey: "showFreezeStatus") }
+    }
+    @Published var showJavaScriptStatus = true {
+        didSet { UserDefaults.standard.set(showJavaScriptStatus, forKey: "showJavaScriptStatus") }
+    }
+    @Published var chromeFontSize = 11.0 {
+        didSet { UserDefaults.standard.set(chromeFontSize, forKey: "chromeFontSize") }
+    }
+    @Published var toolbarHeight = 48.0 {
+        didSet { UserDefaults.standard.set(toolbarHeight, forKey: "toolbarHeight") }
+    }
     @Published var blockingEnabled = true {
         didSet {
             UserDefaults.standard.set(blockingEnabled, forKey: "blockingEnabled")
@@ -466,6 +488,8 @@ final class BrowserModel: ObservableObject {
     @Published var toolsSidePanelPresented = false
     @Published var notesPresented = false
     @Published var settingsPresented = false
+    @Published var javaScriptSettingsPresented = false
+    @Published var helpPresented = false
     @Published private(set) var dataClearing = false
     @Published private(set) var dataClearMessage: String?
     let tools = BrowserToolsModel()
@@ -479,6 +503,18 @@ final class BrowserModel: ObservableObject {
 
         let defaults = UserDefaults.standard
         hideTabStripWithToolbar = defaults.value(default: true, forKey: "hideTabStripWithToolbar")
+        sidebarVisible = defaults.value(default: true, forKey: "sidebarVisible")
+        tabsInSidebar = defaults.value(default: false, forKey: "tabsInSidebar")
+        showFreezeStatus = defaults.value(default: true, forKey: "showFreezeStatus")
+        showJavaScriptStatus = defaults.value(default: true, forKey: "showJavaScriptStatus")
+        let storedFontSize = defaults.double(forKey: "chromeFontSize")
+        if (9...16).contains(storedFontSize) {
+            chromeFontSize = storedFontSize
+        }
+        let storedToolbarHeight = defaults.double(forKey: "toolbarHeight")
+        if (36...64).contains(storedToolbarHeight) {
+            toolbarHeight = storedToolbarHeight
+        }
         if defaults.object(forKey: "blockingEnabled") != nil {
             blockingEnabled = defaults.bool(forKey: "blockingEnabled")
         }
@@ -537,6 +573,10 @@ final class BrowserModel: ObservableObject {
 
     var selectedTab: BrowserTab {
         tabs.first(where: { $0.id == selectedTabID }) ?? tabs[0]
+    }
+
+    var nextFreezeDeadline: Date? {
+        tabs.compactMap(\.freezeDeadline).min()
     }
 
     var consoleCaptureModules: ConsoleCaptureModules {
@@ -615,6 +655,11 @@ final class BrowserModel: ObservableObject {
 
     func toggleReader() {
         selectedTab.readerEnabled ? selectedTab.leaveReader() : selectedTab.enterReader()
+    }
+
+    func resetChromeAppearance() {
+        chromeFontSize = 11
+        toolbarHeight = 48
     }
 
     func applyAppearance(to webView: WKWebView) {

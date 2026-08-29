@@ -12,7 +12,7 @@ struct BrowserView: View {
             } else {
                 hiddenToolbarBar
             }
-            if !browser.toolbarHidden || !browser.hideTabStripWithToolbar {
+            if (!browser.toolbarHidden || !browser.hideTabStripWithToolbar) && !browser.tabsInSidebar {
                 TabStripView(browser: browser)
             }
             MainWorkspaceView(browser: browser)
@@ -39,6 +39,12 @@ struct BrowserView: View {
         }
         .sheet(isPresented: $browser.settingsPresented) {
             BrowserSettingsView(browser: browser)
+        }
+        .sheet(isPresented: $browser.javaScriptSettingsPresented) {
+            JavaScriptSettingsView(browser: browser)
+        }
+        .sheet(isPresented: $browser.helpPresented) {
+            BrowserHelpView()
         }
     }
 
@@ -167,15 +173,28 @@ private struct TabStripView: View {
             if browser.downloads.activeCount > 0 || browser.downloads.message != nil {
                 DownloadStatusView(downloads: browser.downloads)
             }
-            StatusPill(
-                text: browser.freezeMinutes == 0 ? "Freezing: OFF" : "Freezing after \(browser.freezeMinutes)m",
-                color: VindRTheme.accentCyan,
-                icon: "pause.fill"
-            )
-            StatusPill(
-                text: browser.javaScriptEnabled ? "JS: ON" : "JS: OFF",
-                color: browser.javaScriptEnabled ? VindRTheme.accentBlue : Color.white.opacity(0.35)
-            )
+            if browser.showFreezeStatus, let deadline = browser.nextFreezeDeadline {
+                TimelineView(.periodic(from: .now, by: 1)) { context in
+                    FreezeStatusPill(deadline: deadline, now: context.date)
+                }
+            }
+            if browser.showJavaScriptStatus {
+                Menu {
+                    Toggle("Enable page JavaScript", isOn: $browser.javaScriptEnabled)
+                    Toggle("Enable JavaScript console", isOn: $browser.consoleEnabled)
+                    Divider()
+                    Button("JavaScript Settings…") {
+                        browser.javaScriptSettingsPresented = true
+                    }
+                } label: {
+                    StatusPill(
+                        text: browser.javaScriptEnabled ? "JS: ON" : "JS: OFF",
+                        color: browser.javaScriptEnabled ? VindRTheme.accentBlue : Color.white.opacity(0.35)
+                    )
+                }
+                .menuStyle(.borderlessButton)
+                .fixedSize()
+            }
         }
         .padding(.horizontal, 10)
         .frame(height: 38)
@@ -188,6 +207,20 @@ private struct TabStripView: View {
         .overlay(alignment: .bottom) {
             Rectangle().fill(Color.white.opacity(0.06)).frame(height: 1)
         }
+    }
+}
+
+private struct FreezeStatusPill: View {
+    let deadline: Date
+    let now: Date
+
+    var body: some View {
+        let remaining = max(0, Int(deadline.timeIntervalSince(now).rounded(.up)))
+        StatusPill(
+            text: String(format: "Freezing in %d:%02d", remaining / 60, remaining % 60),
+            color: VindRTheme.accentCyan,
+            icon: "pause.fill"
+        )
     }
 }
 
@@ -225,7 +258,7 @@ private struct TabItemView: View {
                 .frame(width: 6, height: 6)
             Button(action: { browser.select(tab) }) {
                 Text(tab.title)
-                    .font(.system(size: 11, weight: isSelected ? .medium : .regular))
+                    .font(.system(size: browser.chromeFontSize, weight: isSelected ? .medium : .regular))
                     .foregroundStyle(Color.white.opacity(isSelected ? 1 : 0.6))
                     .lineLimit(1)
                     .frame(maxWidth: 150, alignment: .leading)
@@ -278,29 +311,55 @@ private struct TopBarView: View {
     let addressFocused: FocusState<Bool>.Binding
 
     var body: some View {
-        ZStack {
-            HStack {
-                Spacer()
-                privatePill
-                addressCapsule
-                Spacer()
-            }
-            .padding(.horizontal, 118)
+        HStack(spacing: 8) {
+            privatePill
 
-            HStack {
-                Spacer()
-                Button(action: browser.newTab) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 11, weight: .semibold))
+            HStack(spacing: 5) {
+                Button(action: { tab.webView?.goBack() }) { Image(systemName: "chevron.left") }
+                    .disabled(!tab.canGoBack)
+                    .help("Back")
+                Button(action: { tab.webView?.goForward() }) { Image(systemName: "chevron.right") }
+                    .disabled(!tab.canGoForward)
+                    .help("Forward")
+                Button(action: stopOrReload) {
+                    Image(systemName: tab.isLoading ? "xmark" : "arrow.clockwise")
                 }
-                .buttonStyle(ChromeButtonStyle())
-                .help("New Tab (Cmd-T)")
+                .help(tab.isLoading ? "Stop" : "Reload")
+                Button(action: browser.copyURL) { Image(systemName: "link") }
+                    .help("Copy URL (Cmd-Shift-C)")
             }
-            .padding(.trailing, 12)
+            .buttonStyle(ChromeButtonStyle())
+
+            addressCapsule
+
+            Button("Go", action: browser.navigate)
+                .font(.system(size: browser.chromeFontSize, weight: .semibold))
+                .buttonStyle(TopBarTextButtonStyle())
+                .keyboardShortcut(.return, modifiers: [])
+                .help("Go")
+
+            Button(action: { browser.sidebarVisible.toggle() }) {
+                Image(systemName: browser.sidebarVisible ? "sidebar.left" : "sidebar.right")
+            }
+            .buttonStyle(ChromeButtonStyle())
+            .help(browser.sidebarVisible ? "Close sidebar" : "Open sidebar")
+
+            Button(action: { browser.toolbarHidden = true }) {
+                Image(systemName: "chevron.up")
+            }
+            .buttonStyle(ChromeButtonStyle())
+            .help("Hide toolbar and expand workspace (Cmd-Shift-T)")
+
+            Button(action: browser.newTab) {
+                Image(systemName: "plus")
+            }
+            .buttonStyle(ChromeButtonStyle())
+            .help("New Tab (Cmd-T)")
         }
         // Native macOS traffic lights remain visible via .hiddenTitleBar.
         .padding(.leading, 76)
-        .frame(height: 48)
+        .padding(.trailing, 12)
+        .frame(height: browser.toolbarHeight)
         .background {
             ZStack {
                 VindRTheme.toolbarGradient
@@ -324,7 +383,7 @@ private struct TopBarView: View {
                     .scaleEffect(ledPulsing ? 1.08 : 0.92)
                     .animation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true), value: ledPulsing)
                 Text(browser.privateMode ? "Private" : "Personal")
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.system(size: browser.chromeFontSize, weight: .medium))
                     .foregroundStyle(Color.white.opacity(0.72))
                     .lineLimit(1)
                 Image(systemName: "chevron.right")
@@ -355,7 +414,7 @@ private struct TopBarView: View {
                 .foregroundStyle(tab.address.hasPrefix("https://") ? VindRTheme.accentBlue : Color.white.opacity(0.42))
             TextField("Search or enter address", text: $tab.address)
                 .textFieldStyle(.plain)
-                .font(.system(size: 11))
+                .font(.system(size: browser.chromeFontSize))
                 .foregroundStyle(Color.white.opacity(0.72))
                 .focused(addressFocused)
                 .onSubmit(browser.navigate)
@@ -371,8 +430,8 @@ private struct TopBarView: View {
             }
         }
         .padding(.horizontal, 12)
-        .frame(maxWidth: 430)
-        .frame(height: 28)
+        .frame(maxWidth: .infinity)
+        .frame(height: min(36, max(28, browser.toolbarHeight - 18)))
         .background(VindRTheme.capsuleGradient, in: RoundedRectangle(cornerRadius: 14))
         .overlay(RoundedRectangle(cornerRadius: 14).stroke(VindRTheme.borderGradient, lineWidth: 1))
         .shadow(color: Color.black.opacity(0.4), radius: 4, x: 0, y: 2)
@@ -393,6 +452,35 @@ private struct TopBarView: View {
         )
     }
 
+    private func stopOrReload() {
+        if tab.isLoading {
+            tab.webView?.stopLoading()
+        } else {
+            tab.webView?.reload()
+        }
+    }
+
+}
+
+private struct TopBarTextButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundStyle(Color.white.opacity(0.82))
+            .padding(.horizontal, 10)
+            .frame(height: 28)
+            .background(
+                LinearGradient(
+                    colors: configuration.isPressed
+                        ? [Color.white.opacity(0.15), Color.white.opacity(0.08)]
+                        : [Color.white.opacity(0.06), Color.white.opacity(0.02)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                ),
+                in: RoundedRectangle(cornerRadius: 6)
+            )
+            .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.white.opacity(0.08), lineWidth: 1))
+            .shadow(color: Color.black.opacity(0.2), radius: 2, y: 1)
+    }
 }
 
 private struct MainWorkspaceView: View {
@@ -400,12 +488,14 @@ private struct MainWorkspaceView: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            WorkspaceSidebarView(browser: browser)
-                .frame(width: 220)
+            if browser.sidebarVisible {
+                WorkspaceSidebarView(browser: browser)
+                    .frame(width: 220)
 
-            Rectangle()
-                .fill(Color.white.opacity(0.06))
-                .frame(width: 1)
+                Rectangle()
+                    .fill(Color.white.opacity(0.06))
+                    .frame(width: 1)
+            }
 
             HSplitView {
                 BrowserPage(browser: browser, tab: browser.selectedTab)
@@ -445,61 +535,60 @@ private struct WorkspaceSidebarView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            sidebarHeading("SESSIONS")
+            if browser.tabsInSidebar {
+                HStack {
+                    sidebarHeading("TABS")
+                    Spacer()
+                    Button(action: browser.newTab) {
+                        Image(systemName: "plus")
+                    }
+                    .buttonStyle(ChromeButtonStyle())
+                    .help("New Tab (Cmd-T)")
+                }
 
-            SessionRow(
-                title: "Personal",
-                color: VindRTheme.accentCyan,
-                badge: "\(browser.tabs.count)",
-                selected: !browser.privateMode,
-                action: { browser.privateMode = false }
-            )
-            SessionRow(
-                title: "Work",
-                color: VindRTheme.accentCyan,
-                badge: "⌘I",
-                selected: browser.toolsPresented || browser.toolsSidePanelPresented,
-                action: openDeveloperTools
-            )
-            SessionRow(
-                title: "Private",
-                color: browser.privateMode ? VindRTheme.accentCyan : Color(hex: "#FFBE2E"),
-                badge: "◐",
-                selected: browser.privateMode,
-                action: { browser.privateMode = true }
-            )
+                ScrollView {
+                    VStack(spacing: 3) {
+                        ForEach(browser.tabs) { tab in
+                            SidebarTabRow(browser: browser, tab: tab)
+                        }
+                    }
+                }
+                .frame(maxHeight: 220)
+            }
 
-            sidebarHeading("NOTES")
-                .padding(.top, 8)
+            sidebarHeading("TOOLS")
+                .padding(.top, browser.tabsInSidebar ? 8 : 0)
 
             SidebarCardButton(
                 title: "Notes / sketchpad",
                 detail: "Stored locally on this Mac",
                 icon: "square.and.pencil",
+                fontSize: browser.chromeFontSize,
                 action: { browser.notesPresented = true }
             )
             SidebarCardButton(
                 title: "Developer tools",
                 detail: browser.developerToolsPresentation.name,
                 icon: "wrench.and.screwdriver",
+                fontSize: browser.chromeFontSize,
                 action: openDeveloperTools
+            )
+            SidebarCardButton(
+                title: "Settings",
+                detail: "Appearance, privacy and shortcuts",
+                icon: "gearshape",
+                fontSize: browser.chromeFontSize,
+                action: { browser.settingsPresented = true }
+            )
+            SidebarCardButton(
+                title: "Help",
+                detail: "User guide and keyboard shortcuts",
+                icon: "questionmark.circle",
+                fontSize: browser.chromeFontSize,
+                action: { browser.helpPresented = true }
             )
 
             Spacer(minLength: 12)
-
-            browserControls
-
-            HStack {
-                Button(action: { browser.settingsPresented = true }) {
-                    Label("Settings", systemImage: "gearshape")
-                }
-                Spacer()
-                Button(action: { browser.toolbarHidden = true }) {
-                    Image(systemName: "chevron.up")
-                }
-                .help("Hide toolbar (Cmd-Shift-T)")
-            }
-            .buttonStyle(ChromeButtonStyle())
         }
         .padding(12)
         .background {
@@ -511,55 +600,13 @@ private struct WorkspaceSidebarView: View {
         }
     }
 
-    private var browserControls: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            sidebarHeading("BROWSER")
-            HStack(spacing: 7) {
-                Button(action: { browser.selectedTab.webView?.goBack() }) {
-                    Image(systemName: "chevron.left")
-                }
-                .disabled(!browser.selectedTab.canGoBack)
-                .help("Back")
-                Button(action: { browser.selectedTab.webView?.goForward() }) {
-                    Image(systemName: "chevron.right")
-                }
-                .disabled(!browser.selectedTab.canGoForward)
-                .help("Forward")
-                Button(action: stopOrReload) {
-                    Image(systemName: browser.selectedTab.isLoading ? "xmark" : "arrow.clockwise")
-                }
-                .help(browser.selectedTab.isLoading ? "Stop" : "Reload")
-                Button(action: browser.copyURL) {
-                    Image(systemName: "link")
-                }
-                .help("Copy URL (Cmd-Shift-C)")
-                Button(action: browser.toggleReader) {
-                    Image(systemName: "doc.richtext")
-                        .foregroundStyle(browser.selectedTab.readerEnabled ? VindRTheme.accentCyan : Color.white.opacity(0.8))
-                }
-                .disabled(!browser.javaScriptEnabled && !browser.selectedTab.readerEnabled)
-                .help(browser.selectedTab.readerEnabled ? "Exit Reader View" : "Reader View")
-            }
-            .buttonStyle(ChromeButtonStyle())
-        }
-        .padding(.bottom, 10)
-    }
-
     private func sidebarHeading(_ text: String) -> some View {
         Text(text)
-            .font(.system(size: 9, weight: .medium, design: .monospaced))
+            .font(.system(size: max(8, browser.chromeFontSize - 2), weight: .medium, design: .monospaced))
             .tracking(1.5)
             .foregroundStyle(Color.white.opacity(0.32))
             .padding(.horizontal, 7)
             .padding(.vertical, 9)
-    }
-
-    private func stopOrReload() {
-        if browser.selectedTab.isLoading {
-            browser.selectedTab.webView?.stopLoading()
-        } else {
-            browser.selectedTab.webView?.reload()
-        }
     }
 
     private func openDeveloperTools() {
@@ -570,71 +617,60 @@ private struct WorkspaceSidebarView: View {
     }
 }
 
-private struct SessionRow: View {
-    let title: String
-    let color: Color
-    let badge: String
-    let selected: Bool
-    let action: () -> Void
+private struct SidebarTabRow: View {
+    @ObservedObject var browser: BrowserModel
+    @ObservedObject var tab: BrowserTab
 
     var body: some View {
-        Button(action: action) {
-            HStack(spacing: 10) {
-                Circle()
-                    .fill(color)
-                    .frame(width: 8, height: 8)
-                    .shadow(color: color.opacity(0.8), radius: 7)
-                Text(title)
-                    .font(.system(size: 12, weight: selected ? .medium : .regular))
-                Spacer()
-                Text(badge)
-                    .font(.system(size: 9, weight: .medium, design: .monospaced))
-                    .foregroundStyle(Color.white.opacity(0.72))
-                    .padding(.horizontal, 6)
-                    .frame(minWidth: 20, minHeight: 18)
-                    .background(Color.white.opacity(0.12), in: Capsule())
+        HStack(spacing: 7) {
+            Circle()
+                .fill(VindRTheme.accentBlue)
+                .frame(width: 6, height: 6)
+            Button(action: { browser.select(tab) }) {
+                Text(tab.title)
+                    .font(.system(size: browser.chromeFontSize, weight: isSelected ? .medium : .regular))
+                    .lineLimit(1)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .foregroundStyle(Color.white.opacity(selected ? 0.95 : 0.62))
-            .padding(.horizontal, 10)
-            .frame(height: 33)
-            .background(
-                selected
-                    ? LinearGradient(
-                        colors: [Color.white.opacity(0.12), Color.white.opacity(0.05)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    : LinearGradient(colors: [.clear], startPoint: .top, endPoint: .bottom),
-                in: RoundedRectangle(cornerRadius: 7)
-            )
-            .overlay {
-                RoundedRectangle(cornerRadius: 7)
-                    .stroke(Color.white.opacity(selected ? 0.10 : 0), lineWidth: 1)
+            .buttonStyle(.plain)
+            if browser.tabs.count > 1 {
+                Button(action: { browser.close(tab) }) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 8, weight: .bold))
+                }
+                .buttonStyle(.plain)
             }
         }
-        .buttonStyle(.plain)
+        .foregroundStyle(Color.white.opacity(isSelected ? 0.95 : 0.55))
+        .padding(.horizontal, 10)
+        .frame(height: 30)
+        .background(isSelected ? Color.white.opacity(0.09) : .clear, in: RoundedRectangle(cornerRadius: 6))
+        .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.white.opacity(isSelected ? 0.08 : 0), lineWidth: 1))
     }
+
+    private var isSelected: Bool { tab.id == browser.selectedTabID }
 }
 
 private struct SidebarCardButton: View {
     let title: String
     let detail: String
     let icon: String
+    let fontSize: Double
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
             HStack(alignment: .top, spacing: 9) {
                 Image(systemName: icon)
-                    .font(.system(size: 11))
+                    .font(.system(size: fontSize))
                     .foregroundStyle(VindRTheme.accentBlue.opacity(0.75))
                     .frame(width: 14)
                 VStack(alignment: .leading, spacing: 5) {
                     Text(title)
-                        .font(.system(size: 11, weight: .medium))
+                        .font(.system(size: fontSize, weight: .medium))
                         .foregroundStyle(Color.white.opacity(0.82))
                     Text(detail)
-                        .font(.system(size: 9))
+                        .font(.system(size: max(8, fontSize - 2)))
                         .foregroundStyle(Color.white.opacity(0.35))
                         .lineLimit(2)
                 }

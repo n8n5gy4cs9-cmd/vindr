@@ -38,9 +38,31 @@ struct BrowserSettingsView: View {
 
                 Section("Browser Chrome") {
                     Toggle("Hide tab strip with toolbar", isOn: $browser.hideTabStripWithToolbar)
+                    Toggle("Show sidebar", isOn: $browser.sidebarVisible)
+                    Toggle("Show tabs in sidebar", isOn: $browser.tabsInSidebar)
+                    Toggle("Show freeze countdown", isOn: $browser.showFreezeStatus)
+                    Toggle("Show JavaScript status", isOn: $browser.showJavaScriptStatus)
                     Text("When enabled, the toolbar hide button and Command-Shift-T hide both the address toolbar and tab strip.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+
+                    HStack {
+                        Text("Chrome font")
+                        Slider(value: $browser.chromeFontSize, in: 9...16, step: 1)
+                        Text("\(Int(browser.chromeFontSize)) pt")
+                            .monospacedDigit()
+                            .frame(width: 42, alignment: .trailing)
+                    }
+
+                    HStack {
+                        Text("Toolbar height")
+                        Slider(value: $browser.toolbarHeight, in: 36...64, step: 2)
+                        Text("\(Int(browser.toolbarHeight)) pt")
+                            .monospacedDigit()
+                            .frame(width: 42, alignment: .trailing)
+                    }
+
+                    Button("Restore Chrome Defaults", action: browser.resetChromeAppearance)
                 }
 
                 Section("Search") {
@@ -126,7 +148,7 @@ struct BrowserSettingsView: View {
             }
             .formStyle(.grouped)
         }
-        .frame(width: 560, height: 600)
+        .frame(width: 580, height: 700)
         .alert("Clear all website data?", isPresented: $confirmDataClear) {
             Button("Cancel", role: .cancel) {}
             Button("Clear Website Data", role: .destructive, action: browser.clearWebsiteData)

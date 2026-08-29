@@ -112,9 +112,14 @@
   - [x] Move every existing browser action into the new composition without removing features.
   - [x] Preserve the live WebKit page and every Developer Tools presentation mode.
   - [x] Synchronize feature and user documentation and build successfully (`swift build`).
-- [ ] Task 22: configurable chrome layout and status controls.
-  - [ ] Reorder navigation, privacy, location, Go, and sidebar controls in the top bar.
-  - [ ] Add a functional freeze countdown and compact JavaScript settings menu with visibility preferences.
-  - [ ] Add optional sidebar tabs and replace sidebar sessions with consistently styled Tools cards.
-  - [ ] Add persistent chrome font and toolbar-height controls with restore defaults.
-  - [ ] Preserve all browser features, synchronize documentation, and build successfully.
+- [x] Task 22: configurable chrome layout and status controls.
+  - [x] Reorder navigation, privacy, location, Go, and sidebar controls in the top bar.
+  - [x] Add a functional freeze countdown and compact JavaScript settings menu with visibility preferences.
+  - [x] Add optional sidebar tabs and replace sidebar sessions with consistently styled Tools cards.
+  - [x] Add persistent chrome font and toolbar-height controls with restore defaults.
+  - [x] Preserve all browser features, synchronize documentation, and build successfully.
+- [x] Task 23: workspace expansion and in-app help.
+  - [x] Add an explicit top-bar hide control and retain a compact restore control while hidden.
+  - [x] Add a matching Help card to the Tools sidebar.
+  - [x] Add an in-app general guide and complete keyboard-shortcut reference.
+  - [x] Synchronize documentation, test, package, and verify the release build.
