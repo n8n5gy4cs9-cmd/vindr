@@ -107,3 +107,14 @@
   - [x] Match the custom toolbar inset, tab indicator, and WebKit under-page color to the target.
   - [x] Give the main content surface the specified glass-card border and shadow treatment.
   - [x] Keep browser behavior and `BrowserModel` unchanged.
+- [x] Task 21: screenshot-matched shell composition.
+  - [x] Rebuild the chrome as a centered top bar, tab/status row, and session-style left rail.
+  - [x] Move every existing browser action into the new composition without removing features.
+  - [x] Preserve the live WebKit page and every Developer Tools presentation mode.
+  - [x] Synchronize feature and user documentation and build successfully (`swift build`).
+- [ ] Task 22: configurable chrome layout and status controls.
+  - [ ] Reorder navigation, privacy, location, Go, and sidebar controls in the top bar.
+  - [ ] Add a functional freeze countdown and compact JavaScript settings menu with visibility preferences.
+  - [ ] Add optional sidebar tabs and replace sidebar sessions with consistently styled Tools cards.
+  - [ ] Add persistent chrome font and toolbar-height controls with restore defaults.
+  - [ ] Preserve all browser features, synchronize documentation, and build successfully.

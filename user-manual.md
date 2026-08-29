@@ -16,10 +16,10 @@ The local build script does not apply a Developer ID signature or notarize vindR
 ## Browse and Search
 
 - Enter a full URL or a search phrase in the location field and press Return.
-- Use Back, Forward, Stop, and Reload beside the location field.
+- Use Back, Forward, Stop/Reload, Copy URL, and Reader controls in the left browser rail.
 - Choose DuckDuckGo, Google, or Bing under Settings.
-- Use the chevron at the right of the toolbar to hide the browser chrome. By default this hides both the address toolbar and tab strip. Press Command-Shift-T to show them again.
-- Click the PRIVATE pill to switch storage modes. It glows green for non-persistent private storage and red for persistent storage; the remaining privacy controls are in Settings.
+- Use the chevron at the bottom of the left rail to hide the browser chrome. By default this hides both the address toolbar and tab strip. Press Command-Shift-T to show them again.
+- Click the Private/Personal pill in the centered top bar, or the corresponding session in the left rail, to switch storage modes. The remaining privacy controls are in Settings.
 
 ## Tabs
 
@@ -34,16 +34,16 @@ The local build script does not apply a Developer ID signature or notarize vindR
 
 1. Click a download link.
 2. Choose a filename and destination in the macOS save dialog.
-3. Follow activity, completion, or failure in the colored download indicator on the toolbar.
+3. Follow activity, completion, or failure in the colored download indicator on the tab/status row.
 
 Downloads continue when switching tabs. Click a completed status to dismiss it.
 
 ## Privacy and Site Access
 
-Click the PRIVATE pill in the toolbar to switch between private and persistent website storage. Open Settings for the remaining privacy controls.
+Click the Private/Personal pill in the top bar, or the corresponding session in the left rail, to switch between private and persistent website storage. Open Settings for the remaining privacy controls.
 
 - **Block ads and trackers** enables vindR's native WebKit content rules.
-- The **PRIVATE** toolbar pill uses non-persistent website storage while green and persistent storage while red.
+- The **Private** state uses non-persistent website storage while green; **Personal** uses persistent storage.
 - **Enable JavaScript** controls page JavaScript.
 - **Darken pages** applies vindR's reversible dark-page styling.
 
@@ -55,13 +55,13 @@ vindR has no telemetry.
 
 ## Reader View
 
-Click the document button or press Command-Shift-R to enter Reader view. vindR extracts the page's main article, removes active elements, and renders it locally. Toggle Reader again to restore the original page.
+Click the document button in the left browser rail or press Command-Shift-R to enter Reader view. vindR extracts the page's main article, removes active elements, and renders it locally. Toggle Reader again to restore the original page.
 
 Reader view requires JavaScript and works best on pages containing an article or main-content region.
 
 ## Notes and Sketchpad
 
-Open Notes with the pencil button or Command-Shift-N.
+Open Notes from the left rail or with Command-Shift-N.
 
 - **Text** is an automatically saved local notebook.
 - **Sketch** supports pointer drawing, Undo, and Clear.
@@ -70,7 +70,7 @@ Notes are stored at `~/Library/Application Support/vindR/Notes.json` and remain 
 
 ## Developer Tools
 
-Open Developer Tools with the tools button or Command-Option-I.
+Open Developer Tools from the left rail or with Command-Option-I.
 
 Choose **Sheet**, **Side Panel**, or **Separate Window** under Settings → Developer Features. The existing sheet remains the default. Side Panel places a resizable tools area beside the current page, while Separate Window opens the same tools in their own native window. Both non-modal modes leave the browser toolbar and page usable, so you can reload or navigate while watching Console or Network output. The Browser menu also provides direct **Open Developer Tools In** commands for all three modes.
 

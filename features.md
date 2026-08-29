@@ -10,15 +10,17 @@
 - Native macOS browser powered by WebKit
 - URL navigation and web search from one location field
 - DuckDuckGo, Google, and Bing search-engine selection
-- Back, forward, stop, reload, and copy-current-URL controls
-- Compact 36-point hideable toolbar with native macOS window controls
+- Back, forward, stop, reload, copy-current-URL, and Reader controls in a dedicated browser rail
+- Screenshot-matched 48-point hideable top bar with native macOS window controls
+- Session-style left rail with direct privacy, notes, tools, settings, and browser actions
 - Optional tab-strip retention while the address toolbar is hidden
-- Unified capsule location field with HTTPS, search-engine, and Reader indicators
+- Centered capsule location field with HTTPS state
 - Private-session LED status pill
 - Multiple tabs with create, select, and close controls
 - Deep-navy tab styling with a cyan active-tab accent
 - `target="_blank"` and `window.open` links opened in vindR tabs
 - Configurable background-tab freezing
+- Visible freeze and JavaScript status badges in the tab row
 - Automatic WebKit content-process recovery
 - Native file downloads with destination selection
 - Download activity and completion status

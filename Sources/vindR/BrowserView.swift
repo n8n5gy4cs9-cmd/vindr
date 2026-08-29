@@ -8,41 +8,14 @@ struct BrowserView: View {
     var body: some View {
         VStack(spacing: 0) {
             if !browser.toolbarHidden {
-                ToolbarView(browser: browser, tab: browser.selectedTab, addressFocused: $addressFocused)
+                TopBarView(browser: browser, tab: browser.selectedTab, addressFocused: $addressFocused)
             } else {
                 hiddenToolbarBar
             }
             if !browser.toolbarHidden || !browser.hideTabStripWithToolbar {
                 TabStripView(browser: browser)
             }
-            HSplitView {
-                BrowserPage(browser: browser, tab: browser.selectedTab)
-                    .frame(minWidth: 320)
-
-                if browser.toolsSidePanelPresented {
-                    BrowserToolsView(
-                        browser: browser,
-                        tools: browser.tools,
-                        minimumWidth: 480,
-                        closeAction: { browser.toolsSidePanelPresented = false }
-                    )
-                    .frame(idealWidth: 560, maxWidth: 720)
-                }
-            }
-            .background {
-                ZStack {
-                    VindRTheme.cardGradient
-                    Rectangle().fill(.ultraThinMaterial)
-                }
-            }
-            .overlay {
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 8))
-            .shadow(color: Color.black.opacity(0.3), radius: 6)
-            .padding(.horizontal, 4)
-            .padding(.bottom, 4)
+            MainWorkspaceView(browser: browser)
         }
         .tint(VindRTheme.accentCyan)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -71,6 +44,9 @@ struct BrowserView: View {
 
     private var hiddenToolbarBar: some View {
         HStack {
+            Text("vindR")
+                .font(.system(size: 10, weight: .semibold, design: .rounded))
+                .foregroundStyle(Color.white.opacity(0.45))
             Spacer()
             Button(action: { browser.toolbarHidden = false }) {
                 Image(systemName: "chevron.down")
@@ -79,7 +55,8 @@ struct BrowserView: View {
             .buttonStyle(ChromeButtonStyle())
             .help("Show toolbar (Cmd-Shift-T)")
         }
-        .padding(.horizontal, 10)
+        .padding(.leading, 76)
+        .padding(.trailing, 10)
         .frame(height: 20)
         .background {
             ZStack {
@@ -176,7 +153,7 @@ private struct TabStripView: View {
     @ObservedObject var browser: BrowserModel
 
     var body: some View {
-        HStack(spacing: 3) {
+        HStack(spacing: 8) {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 3) {
                     ForEach(browser.tabs) { tab in
@@ -184,15 +161,24 @@ private struct TabStripView: View {
                     }
                 }
             }
-            Button(action: browser.newTab) {
-                Image(systemName: "plus")
-                    .font(.system(size: 10, weight: .semibold))
+
+            Spacer(minLength: 8)
+
+            if browser.downloads.activeCount > 0 || browser.downloads.message != nil {
+                DownloadStatusView(downloads: browser.downloads)
             }
-            .buttonStyle(ChromeButtonStyle())
-            .help("New Tab (Cmd-T)")
+            StatusPill(
+                text: browser.freezeMinutes == 0 ? "Freezing: OFF" : "Freezing after \(browser.freezeMinutes)m",
+                color: VindRTheme.accentCyan,
+                icon: "pause.fill"
+            )
+            StatusPill(
+                text: browser.javaScriptEnabled ? "JS: ON" : "JS: OFF",
+                color: browser.javaScriptEnabled ? VindRTheme.accentBlue : Color.white.opacity(0.35)
+            )
         }
-        .padding(.horizontal, 8)
-        .frame(height: 32)
+        .padding(.horizontal, 10)
+        .frame(height: 38)
         .background {
             ZStack {
                 VindRTheme.tabStripGradient
@@ -202,6 +188,29 @@ private struct TabStripView: View {
         .overlay(alignment: .bottom) {
             Rectangle().fill(Color.white.opacity(0.06)).frame(height: 1)
         }
+    }
+}
+
+private struct StatusPill: View {
+    let text: String
+    let color: Color
+    var icon: String?
+
+    var body: some View {
+        HStack(spacing: 4) {
+            if let icon {
+                Image(systemName: icon)
+                    .font(.system(size: 7, weight: .bold))
+            }
+            Text(text)
+                .font(.system(size: 9, weight: .medium, design: .monospaced))
+                .lineLimit(1)
+        }
+        .foregroundStyle(color)
+        .padding(.horizontal, 9)
+        .frame(height: 21)
+        .background(color.opacity(0.08), in: Capsule())
+        .overlay(Capsule().stroke(color.opacity(0.38), lineWidth: 1))
     }
 }
 
@@ -263,140 +272,112 @@ private struct TabItemView: View {
     private var isSelected: Bool { tab.id == browser.selectedTabID }
 }
 
-private struct ToolbarView: View {
+private struct TopBarView: View {
     @ObservedObject var browser: BrowserModel
     @ObservedObject var tab: BrowserTab
     let addressFocused: FocusState<Bool>.Binding
-    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
-        HStack(spacing: 10) {
-            Button(action: { tab.webView?.goBack() }) { Image(systemName: "chevron.left") }
-                .disabled(!tab.canGoBack)
-            Button(action: { tab.webView?.goForward() }) { Image(systemName: "chevron.right") }
-                .disabled(!tab.canGoForward)
-            Button(action: stopOrReload) {
-                Image(systemName: tab.isLoading ? "xmark" : "arrow.clockwise")
+        ZStack {
+            HStack {
+                Spacer()
+                privatePill
+                addressCapsule
+                Spacer()
             }
+            .padding(.horizontal, 118)
 
-            Button(action: browser.copyURL) { Image(systemName: "link") }
-                .help("Copy URL (Cmd-Shift-C)")
-
-            HStack(spacing: 6) {
-                Image(systemName: tab.address.hasPrefix("https://") ? "lock.fill" : "magnifyingglass")
-                    .font(.system(size: 10))
-                    .foregroundStyle(tab.address.hasPrefix("https://") ? VindRTheme.accentBlue : Color.gray)
-                TextField("Search or enter address", text: $tab.address)
-                    .textFieldStyle(.plain)
-                    .font(.system(size: 12))
-                    .foregroundStyle(VindRTheme.text)
-                    .focused(addressFocused)
-                    .onSubmit(browser.navigate)
-                Button(action: {
-                    tab.address = ""
-                    addressFocused.wrappedValue = true
-                }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundStyle(Color.gray)
+            HStack {
+                Spacer()
+                Button(action: browser.newTab) {
+                    Image(systemName: "plus")
+                        .font(.system(size: 11, weight: .semibold))
                 }
-                .buttonStyle(.plain)
-                .opacity(tab.address.isEmpty ? 0 : 1)
-                Button(action: browser.toggleReader) {
-                    Image(systemName: "doc.richtext")
-                        .foregroundStyle(tab.readerEnabled ? VindRTheme.accentCyan : Color.gray)
-                }
-                .buttonStyle(.plain)
-                .disabled(!browser.javaScriptEnabled && !tab.readerEnabled)
-                .help(tab.readerEnabled ? "Exit Reader View" : "Reader View")
+                .buttonStyle(ChromeButtonStyle())
+                .help("New Tab (Cmd-T)")
             }
-            .padding(.horizontal, 12)
-            .frame(height: 28)
-            .frame(maxWidth: 720)
-            .background(VindRTheme.capsuleGradient, in: RoundedRectangle(cornerRadius: 8))
-            .overlay(RoundedRectangle(cornerRadius: 8).stroke(VindRTheme.borderGradient, lineWidth: 1))
-            .shadow(color: Color.black.opacity(0.4), radius: 4, x: 0, y: 2)
-            .shadow(
-                color: addressFocused.wrappedValue ? VindRTheme.accentCyan.opacity(0.15) : .clear,
-                radius: 8
-            )
-
-            Button(action: browser.navigate) { Image(systemName: "arrow.right") }
-                .keyboardShortcut(.return, modifiers: [])
-                .help("Go")
-
-            DownloadStatusView(downloads: browser.downloads)
-
-            Button(action: { browser.privateMode.toggle() }) {
-                HStack(spacing: 5) {
-                    Circle()
-                        .fill(privateStatusColor)
-                        .frame(width: 8, height: 8)
-                        .shadow(color: privateStatusColor.opacity(0.8), radius: 8)
-                        .shadow(color: privateStatusColor, radius: 3)
-                        .scaleEffect(ledPulsing ? 1.08 : 0.92)
-                        .animation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true), value: ledPulsing)
-                    Text("PRIVATE")
-                        .font(.system(size: 9, weight: .bold, design: .monospaced))
-                        .foregroundStyle(browser.privateMode ? VindRTheme.accentCyan : Color.white.opacity(0.7))
-                        .lineLimit(1)
-                        .fixedSize(horizontal: true, vertical: false)
-                    Image(systemName: "chevron.down")
-                        .font(.system(size: 7))
-                        .foregroundStyle(Color.white.opacity(0.5))
-                }
-                .frame(width: 76, height: 24)
-                .background(
-                    LinearGradient(
-                        colors: [Color.black.opacity(0.6), Color.black.opacity(0.3)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    ),
-                    in: RoundedRectangle(cornerRadius: 6)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 6)
-                        .stroke(privateBorderGradient, lineWidth: 1)
-                )
-            }
-            .buttonStyle(.plain)
-            .help("Private: nonPersistent")
-            .onAppear { ledPulsing = true }
-
-            Button(action: openDeveloperTools) {
-                Image(systemName: "wrench.and.screwdriver")
-                    .foregroundStyle(.orange)
-            }
-            .help("Developer Tools in \(browser.developerToolsPresentation.name) (Cmd-Option-I)")
-
-            Button(action: { browser.notesPresented = true }) {
-                Image(systemName: "square.and.pencil")
-                    .foregroundStyle(.pink)
-            }
-            .help("Notes (Cmd-Shift-N)")
-
-            Button(action: { browser.settingsPresented = true }) {
-                Image(systemName: "gearshape")
-                    .foregroundStyle(.blue)
-            }
-            .help("Settings (Cmd-,)")
-
-            Button(action: { browser.toolbarHidden = true }) { Image(systemName: "chevron.up") }
-                .help("Hide toolbar (Cmd-Shift-T)")
+            .padding(.trailing, 12)
         }
-        .buttonStyle(ChromeButtonStyle())
         // Native macOS traffic lights remain visible via .hiddenTitleBar.
         .padding(.leading, 76)
-        .padding(.trailing, 10)
-        .frame(height: 36)
+        .frame(height: 48)
         .background {
             ZStack {
                 VindRTheme.toolbarGradient
                 Rectangle().fill(.ultraThinMaterial).opacity(0.6)
             }
         }
+        .overlay(alignment: .bottom) {
+            Rectangle().fill(Color.white.opacity(0.08)).frame(height: 1)
+        }
     }
 
     @State private var ledPulsing = false
+
+    private var privatePill: some View {
+        Button(action: { browser.privateMode.toggle() }) {
+            HStack(spacing: 7) {
+                Circle()
+                    .fill(privateStatusColor)
+                    .frame(width: 8, height: 8)
+                    .shadow(color: privateStatusColor.opacity(0.8), radius: 8)
+                    .scaleEffect(ledPulsing ? 1.08 : 0.92)
+                    .animation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true), value: ledPulsing)
+                Text(browser.privateMode ? "Private" : "Personal")
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(Color.white.opacity(0.72))
+                    .lineLimit(1)
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 8, weight: .bold))
+                    .foregroundStyle(Color.white.opacity(0.5))
+            }
+            .padding(.horizontal, 10)
+            .frame(height: 28)
+            .background(
+                LinearGradient(
+                    colors: [Color.black.opacity(0.6), Color.black.opacity(0.3)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                ),
+                in: RoundedRectangle(cornerRadius: 14)
+            )
+            .overlay(RoundedRectangle(cornerRadius: 14).stroke(privateBorderGradient, lineWidth: 1))
+        }
+        .buttonStyle(.plain)
+        .help("Switch between private and persistent website storage")
+        .onAppear { ledPulsing = true }
+    }
+
+    private var addressCapsule: some View {
+        HStack(spacing: 7) {
+            Image(systemName: tab.address.hasPrefix("https://") ? "lock.fill" : "magnifyingglass")
+                .font(.system(size: 9))
+                .foregroundStyle(tab.address.hasPrefix("https://") ? VindRTheme.accentBlue : Color.white.opacity(0.42))
+            TextField("Search or enter address", text: $tab.address)
+                .textFieldStyle(.plain)
+                .font(.system(size: 11))
+                .foregroundStyle(Color.white.opacity(0.72))
+                .focused(addressFocused)
+                .onSubmit(browser.navigate)
+            if !tab.address.isEmpty {
+                Button(action: {
+                    tab.address = ""
+                    addressFocused.wrappedValue = true
+                }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(Color.white.opacity(0.34))
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal, 12)
+        .frame(maxWidth: 430)
+        .frame(height: 28)
+        .background(VindRTheme.capsuleGradient, in: RoundedRectangle(cornerRadius: 14))
+        .overlay(RoundedRectangle(cornerRadius: 14).stroke(VindRTheme.borderGradient, lineWidth: 1))
+        .shadow(color: Color.black.opacity(0.4), radius: 4, x: 0, y: 2)
+        .shadow(color: addressFocused.wrappedValue ? VindRTheme.accentCyan.opacity(0.15) : .clear, radius: 8)
+    }
 
     private var privateStatusColor: Color {
         browser.privateMode ? VindRTheme.accentCyan : VindRTheme.redLED
@@ -412,11 +393,172 @@ private struct ToolbarView: View {
         )
     }
 
+}
+
+private struct MainWorkspaceView: View {
+    @ObservedObject var browser: BrowserModel
+
+    var body: some View {
+        HStack(spacing: 0) {
+            WorkspaceSidebarView(browser: browser)
+                .frame(width: 220)
+
+            Rectangle()
+                .fill(Color.white.opacity(0.06))
+                .frame(width: 1)
+
+            HSplitView {
+                BrowserPage(browser: browser, tab: browser.selectedTab)
+                    .frame(minWidth: 320)
+
+                if browser.toolsSidePanelPresented {
+                    BrowserToolsView(
+                        browser: browser,
+                        tools: browser.tools,
+                        minimumWidth: 480,
+                        closeAction: { browser.toolsSidePanelPresented = false }
+                    )
+                    .frame(idealWidth: 560, maxWidth: 720)
+                }
+            }
+        }
+        .background {
+            ZStack {
+                VindRTheme.cardGradient
+                Rectangle().fill(.ultraThinMaterial)
+            }
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(Color.white.opacity(0.08), lineWidth: 1)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .shadow(color: Color.black.opacity(0.3), radius: 6)
+        .padding(.horizontal, 4)
+        .padding(.bottom, 4)
+    }
+}
+
+private struct WorkspaceSidebarView: View {
+    @ObservedObject var browser: BrowserModel
+    @Environment(\.openWindow) private var openWindow
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            sidebarHeading("SESSIONS")
+
+            SessionRow(
+                title: "Personal",
+                color: VindRTheme.accentCyan,
+                badge: "\(browser.tabs.count)",
+                selected: !browser.privateMode,
+                action: { browser.privateMode = false }
+            )
+            SessionRow(
+                title: "Work",
+                color: VindRTheme.accentCyan,
+                badge: "⌘I",
+                selected: browser.toolsPresented || browser.toolsSidePanelPresented,
+                action: openDeveloperTools
+            )
+            SessionRow(
+                title: "Private",
+                color: browser.privateMode ? VindRTheme.accentCyan : Color(hex: "#FFBE2E"),
+                badge: "◐",
+                selected: browser.privateMode,
+                action: { browser.privateMode = true }
+            )
+
+            sidebarHeading("NOTES")
+                .padding(.top, 8)
+
+            SidebarCardButton(
+                title: "Notes / sketchpad",
+                detail: "Stored locally on this Mac",
+                icon: "square.and.pencil",
+                action: { browser.notesPresented = true }
+            )
+            SidebarCardButton(
+                title: "Developer tools",
+                detail: browser.developerToolsPresentation.name,
+                icon: "wrench.and.screwdriver",
+                action: openDeveloperTools
+            )
+
+            Spacer(minLength: 12)
+
+            browserControls
+
+            HStack {
+                Button(action: { browser.settingsPresented = true }) {
+                    Label("Settings", systemImage: "gearshape")
+                }
+                Spacer()
+                Button(action: { browser.toolbarHidden = true }) {
+                    Image(systemName: "chevron.up")
+                }
+                .help("Hide toolbar (Cmd-Shift-T)")
+            }
+            .buttonStyle(ChromeButtonStyle())
+        }
+        .padding(12)
+        .background {
+            LinearGradient(
+                colors: [VindRTheme.bgTab.opacity(0.78), VindRTheme.bgDeep.opacity(0.94)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        }
+    }
+
+    private var browserControls: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            sidebarHeading("BROWSER")
+            HStack(spacing: 7) {
+                Button(action: { browser.selectedTab.webView?.goBack() }) {
+                    Image(systemName: "chevron.left")
+                }
+                .disabled(!browser.selectedTab.canGoBack)
+                .help("Back")
+                Button(action: { browser.selectedTab.webView?.goForward() }) {
+                    Image(systemName: "chevron.right")
+                }
+                .disabled(!browser.selectedTab.canGoForward)
+                .help("Forward")
+                Button(action: stopOrReload) {
+                    Image(systemName: browser.selectedTab.isLoading ? "xmark" : "arrow.clockwise")
+                }
+                .help(browser.selectedTab.isLoading ? "Stop" : "Reload")
+                Button(action: browser.copyURL) {
+                    Image(systemName: "link")
+                }
+                .help("Copy URL (Cmd-Shift-C)")
+                Button(action: browser.toggleReader) {
+                    Image(systemName: "doc.richtext")
+                        .foregroundStyle(browser.selectedTab.readerEnabled ? VindRTheme.accentCyan : Color.white.opacity(0.8))
+                }
+                .disabled(!browser.javaScriptEnabled && !browser.selectedTab.readerEnabled)
+                .help(browser.selectedTab.readerEnabled ? "Exit Reader View" : "Reader View")
+            }
+            .buttonStyle(ChromeButtonStyle())
+        }
+        .padding(.bottom, 10)
+    }
+
+    private func sidebarHeading(_ text: String) -> some View {
+        Text(text)
+            .font(.system(size: 9, weight: .medium, design: .monospaced))
+            .tracking(1.5)
+            .foregroundStyle(Color.white.opacity(0.32))
+            .padding(.horizontal, 7)
+            .padding(.vertical, 9)
+    }
+
     private func stopOrReload() {
-        if tab.isLoading {
-            tab.webView?.stopLoading()
+        if browser.selectedTab.isLoading {
+            browser.selectedTab.webView?.stopLoading()
         } else {
-            tab.webView?.reload()
+            browser.selectedTab.webView?.reload()
         }
     }
 
@@ -425,6 +567,92 @@ private struct ToolbarView: View {
         if browser.developerToolsPresentation == .window {
             openWindow(id: DeveloperToolsWindow.id)
         }
+    }
+}
+
+private struct SessionRow: View {
+    let title: String
+    let color: Color
+    let badge: String
+    let selected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 10) {
+                Circle()
+                    .fill(color)
+                    .frame(width: 8, height: 8)
+                    .shadow(color: color.opacity(0.8), radius: 7)
+                Text(title)
+                    .font(.system(size: 12, weight: selected ? .medium : .regular))
+                Spacer()
+                Text(badge)
+                    .font(.system(size: 9, weight: .medium, design: .monospaced))
+                    .foregroundStyle(Color.white.opacity(0.72))
+                    .padding(.horizontal, 6)
+                    .frame(minWidth: 20, minHeight: 18)
+                    .background(Color.white.opacity(0.12), in: Capsule())
+            }
+            .foregroundStyle(Color.white.opacity(selected ? 0.95 : 0.62))
+            .padding(.horizontal, 10)
+            .frame(height: 33)
+            .background(
+                selected
+                    ? LinearGradient(
+                        colors: [Color.white.opacity(0.12), Color.white.opacity(0.05)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    : LinearGradient(colors: [.clear], startPoint: .top, endPoint: .bottom),
+                in: RoundedRectangle(cornerRadius: 7)
+            )
+            .overlay {
+                RoundedRectangle(cornerRadius: 7)
+                    .stroke(Color.white.opacity(selected ? 0.10 : 0), lineWidth: 1)
+            }
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private struct SidebarCardButton: View {
+    let title: String
+    let detail: String
+    let icon: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(alignment: .top, spacing: 9) {
+                Image(systemName: icon)
+                    .font(.system(size: 11))
+                    .foregroundStyle(VindRTheme.accentBlue.opacity(0.75))
+                    .frame(width: 14)
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(title)
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(Color.white.opacity(0.82))
+                    Text(detail)
+                        .font(.system(size: 9))
+                        .foregroundStyle(Color.white.opacity(0.35))
+                        .lineLimit(2)
+                }
+                Spacer(minLength: 0)
+            }
+            .padding(10)
+            .frame(maxWidth: .infinity, minHeight: 58, alignment: .topLeading)
+            .background {
+                ZStack {
+                    VindRTheme.cardGradient
+                    RoundedRectangle(cornerRadius: 7).fill(.ultraThinMaterial).opacity(0.45)
+                }
+            }
+            .overlay(RoundedRectangle(cornerRadius: 7).stroke(Color.white.opacity(0.08), lineWidth: 1))
+            .shadow(color: Color.black.opacity(0.3), radius: 6)
+        }
+        .buttonStyle(.plain)
+        .padding(.bottom, 7)
     }
 }
 
