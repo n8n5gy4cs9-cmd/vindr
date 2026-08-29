@@ -7,20 +7,13 @@ struct BrowserView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            tabStrip
+            Divider()
             if !browser.toolbarHidden {
                 Toolbar(browser: browser, tab: browser.selectedTab, addressFocused: $addressFocused)
                 Divider()
             }
-            tabStrip
-            Divider()
-            VSplitView {
-                BrowserPage(browser: browser, tab: browser.selectedTab)
-                    .frame(minHeight: 260)
-                if browser.developerDockVisible {
-                    BrowserDeveloperDock(browser: browser, tools: browser.tools)
-                        .frame(minHeight: 180, idealHeight: 250)
-                }
-            }
+            BrowserPage(browser: browser, tab: browser.selectedTab)
         }
         .tint(.cyan)
         .background(Color(nsColor: .windowBackgroundColor))
@@ -70,8 +63,8 @@ private struct TabButton: View {
 
     var body: some View {
         HStack(spacing: 5) {
-            Image(systemName: tab.isLoading ? "circle.dotted" : "circle.fill")
-                .font(.system(size: 6, weight: .bold))
+            Image(systemName: tab.isFrozen ? "snowflake" : (tab.isLoading ? "circle.dotted" : "globe"))
+                .font(.system(size: tab.isFrozen ? 9 : 8, weight: .bold))
                 .foregroundStyle(tab.isLoading ? Color.orange : (isSelected ? Color.cyan : Color.secondary))
             Button(action: { browser.select(tab) }) {
                 Text(tab.title)
@@ -121,27 +114,38 @@ private struct Toolbar: View {
                 Image(systemName: tab.isLoading ? "xmark" : "arrow.clockwise")
             }
 
-            TextField("Search or enter address", text: $tab.address)
-                .textFieldStyle(.roundedBorder)
-                .focused(addressFocused)
-                .onSubmit(browser.navigate)
-                .frame(maxWidth: 720)
+            Button(action: browser.copyURL) { Image(systemName: "link") }
+                .help("Copy URL (Cmd-Shift-C)")
+
+            HStack(spacing: 6) {
+                Image(systemName: tab.address.hasPrefix("https://") ? "lock.fill" : "magnifyingglass")
+                    .font(.caption)
+                    .foregroundStyle(tab.address.hasPrefix("https://") ? .green : .secondary)
+                Image(systemName: "magnifyingglass.circle.fill")
+                    .foregroundStyle(.orange)
+                    .help(browser.searchEngine.name)
+                TextField("Search or enter address", text: $tab.address)
+                    .textFieldStyle(.plain)
+                    .focused(addressFocused)
+                    .onSubmit(browser.navigate)
+                Button(action: browser.toggleReader) {
+                    Image(systemName: tab.readerEnabled ? "doc.plaintext.fill" : "doc.plaintext")
+                        .foregroundStyle(tab.readerEnabled ? .cyan : .secondary)
+                }
+                .disabled(!browser.javaScriptEnabled && !tab.readerEnabled)
+                .help(tab.readerEnabled ? "Exit Reader View" : "Reader View")
+            }
+            .padding(.horizontal, 9)
+            .padding(.vertical, 5)
+            .frame(maxWidth: 720)
+            .background(Color.black.opacity(0.24), in: Capsule())
+            .overlay(Capsule().stroke(Color.white.opacity(0.10)))
 
             Button(action: browser.navigate) { Image(systemName: "arrow.right") }
                 .keyboardShortcut(.return, modifiers: [])
                 .help("Go")
 
-            Button(action: browser.copyURL) { Image(systemName: "link") }
-                .help("Copy URL (Cmd-Shift-C)")
-
             DownloadStatusView(downloads: browser.downloads)
-
-            Button(action: browser.toggleReader) {
-                Image(systemName: tab.readerEnabled ? "doc.plaintext.fill" : "doc.plaintext")
-                    .foregroundStyle(.purple)
-            }
-            .disabled(!browser.javaScriptEnabled && !tab.readerEnabled)
-            .help(tab.readerEnabled ? "Exit Reader View" : "Reader View")
 
             Menu {
                 Toggle("Block ads and trackers", isOn: $browser.blockingEnabled)
@@ -150,22 +154,27 @@ private struct Toolbar: View {
                 Divider()
                 Toggle("Darken pages", isOn: $browser.darkModeEnabled)
             } label: {
-                Image(systemName: browser.privateMode ? "lock.fill" : "shield.lefthalf.filled")
-                    .foregroundStyle(browser.unrestrictedBrowsing ? .orange : (browser.privateMode ? .mint : .blue))
+                HStack(spacing: 5) {
+                    Circle()
+                        .fill(browser.privateMode ? Color.green : Color.red)
+                        .frame(width: 7, height: 7)
+                        .shadow(color: browser.privateMode ? .green : .red, radius: 4)
+                    Text("PRIVATE")
+                        .font(.system(size: 9, weight: .bold))
+                    Image(systemName: browser.privateMode ? "lock.fill" : "lock.open")
+                        .font(.caption2)
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(Color.primary.opacity(0.08), in: Capsule())
             }
             .menuStyle(.borderlessButton)
             .help(browser.privateMode ? "Privacy: private session" : "Privacy and appearance")
 
-            Menu {
-                Button(browser.developerDockVisible ? "Hide Bottom Developer Panel" : "Show Bottom Developer Panel") {
-                    browser.developerDockVisible.toggle()
-                }
-                Button("Open Full Developer Suite…") { browser.toolsPresented = true }
-            } label: {
-                Image(systemName: browser.developerDockVisible ? "wrench.and.screwdriver.fill" : "wrench.and.screwdriver")
-                    .foregroundStyle(browser.developerDockVisible ? .cyan : .orange)
+            Button(action: { browser.toolsPresented = true }) {
+                Image(systemName: "wrench.and.screwdriver")
+                    .foregroundStyle(.orange)
             }
-            .menuStyle(.borderlessButton)
             .help("Developer Tools (Cmd-Option-I)")
 
             Button(action: { browser.notesPresented = true }) {

@@ -12,7 +12,10 @@
 - DuckDuckGo, Google, and Bing search-engine selection
 - Back, forward, stop, reload, and copy-current-URL controls
 - Compact hideable toolbar
+- Unified capsule location field with HTTPS, search-engine, and Reader indicators
+- Private-session LED status pill
 - Multiple tabs with create, select, and close controls
+- Navy/cyan tab styling and frozen-tab snowflake state
 - `target="_blank"` and `window.open` links opened in vindR tabs
 - Configurable background-tab freezing
 - Automatic WebKit content-process recovery
@@ -34,9 +37,11 @@
 - Reversible dark-page styling
 - Sanitized local Reader view
 - Colored tab strip and toolbar
+- Native dark shell with blur and a 16:10 default window
 - Colored, formatted developer-tool output
 
 ## Developer Tools
+
 
 - Opt-in JavaScript console
 - JavaScript evaluation in the current page

@@ -1,0 +1,12 @@
+{
+  "": {
+    "swift-dependencies": "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRTests.build/primary.swiftdeps"
+  },
+  "/Users/harriahola/Projects/Swift/vindR/Tests/vindRTests/DeveloperCaptureTests.swift": {
+    "dependencies": "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRTests.build/DeveloperCaptureTests.d",
+    "object": "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRTests.build/DeveloperCaptureTests.swift.o",
+    "swiftmodule": "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRTests.build/DeveloperCaptureTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRTests.build/DeveloperCaptureTests.swiftdeps",
+    "diagnostics": "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRTests.build/DeveloperCaptureTests.dia"
+  }
+}

@@ -68,3 +68,8 @@
   - [x] Package `vindR.app` and `user-manual.md` into `dist/vindR-macOS.zip`.
   - [x] Require future user-facing changes to keep the manual synchronized.
   - [x] Run the release packaging flow and verify the ZIP contents.
+- [x] Task 14: native dark workspace polish.
+  - [x] Apply navy/cyan dark styling and add an integrated Copy URL control.
+  - [x] Preserve the original sheet-based Notes, Developer Tools, and Settings presentation.
+  - [x] Keep all existing features accessible.
+  - [x] Add `ui-guide.md` and synchronize feature/manual guidance.

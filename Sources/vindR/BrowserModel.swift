@@ -105,6 +105,8 @@ final class BrowserTab: ObservableObject, Identifiable {
     private var freezeTask: Task<Void, Never>?
     private var readerOriginalURL: URL?
 
+    var isFrozen: Bool { retainedWebView == nil && title != "New Tab" }
+
     init(address: String = "https://duckduckgo.com", title: String = "New Tab") {
         self.address = address
         self.title = title
@@ -383,7 +385,6 @@ final class BrowserModel: ObservableObject {
         }
     }
     @Published var toolsPresented = false
-    @Published var developerDockVisible = false
     @Published var notesPresented = false
     @Published var settingsPresented = false
     @Published private(set) var dataClearing = false

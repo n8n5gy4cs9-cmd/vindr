@@ -19,6 +19,7 @@ The local build script does not apply a Developer ID signature or notarize vindR
 - Use Back, Forward, Stop, and Reload beside the location field.
 - Choose DuckDuckGo, Google, or Bing under Settings.
 - Use the chevron at the right of the toolbar to hide it. Press Command-Shift-T to show it again.
+- The PRIVATE pill shows green for non-persistent private storage and red for persistent storage. Its menu controls privacy options.
 
 ## Tabs
 

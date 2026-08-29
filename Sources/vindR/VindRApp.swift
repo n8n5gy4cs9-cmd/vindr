@@ -48,9 +48,7 @@ private struct BrowserCommands: Commands {
             }
             .keyboardShortcut("r", modifiers: [.command, .shift])
             Divider()
-            Button(browser.developerDockVisible ? "Hide Developer Tools" : "Show Developer Tools") {
-                browser.developerDockVisible.toggle()
-            }
+            Button("Developer Tools") { browser.toolsPresented = true }
                 .keyboardShortcut("i", modifiers: [.command, .option])
             Button("Notes and Sketchpad") { browser.notesPresented = true }
                 .keyboardShortcut("n", modifiers: [.command, .shift])

@@ -1,6 +1,10 @@
 {
   "builtTestProducts" : [
-
+    {
+      "binaryPath" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRPackageTests.xctest/Contents/MacOS/vindRPackageTests",
+      "packagePath" : "/Users/harriahola/Projects/Swift/vindR",
+      "productName" : "vindRPackageTests"
+    }
   ],
   "copyCommands" : {
     "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR_vindR.bundle/AppIcon.icns" : {
@@ -51,6 +55,10 @@
       "inputs" : [
         {
           "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/Sources/vindR/BrowserDownloads.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/harriahola/Projects/Swift/vindR/Sources/vindR/BrowserModel.swift"
         },
         {
@@ -72,6 +80,10 @@
         {
           "kind" : "file",
           "name" : "/Users/harriahola/Projects/Swift/vindR/Sources/vindR/ContentBlocker.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/Sources/vindR/DeveloperCapture.swift"
         },
         {
           "kind" : "file",
@@ -98,12 +110,14 @@
       "moduleName" : "vindR",
       "moduleOutputPath" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/Modules/vindR.swiftmodule",
       "objects" : [
+        "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/BrowserDownloads.swift.o",
         "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/BrowserModel.swift.o",
         "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/BrowserNotes.swift.o",
         "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/BrowserSettings.swift.o",
         "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/BrowserTools.swift.o",
         "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/BrowserView.swift.o",
         "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/ContentBlocker.swift.o",
+        "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/DeveloperCapture.swift.o",
         "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/VindRApp.swift.o",
         "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/resource_bundle_accessor.swift.o"
       ],
@@ -160,6 +174,10 @@
       "outputs" : [
         {
           "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/BrowserDownloads.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/BrowserModel.swift.o"
         },
         {
@@ -184,6 +202,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/DeveloperCapture.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/VindRApp.swift.o"
         },
         {
@@ -197,16 +219,207 @@
       ],
       "prepareForIndexing" : false,
       "sources" : [
+        "/Users/harriahola/Projects/Swift/vindR/Sources/vindR/BrowserDownloads.swift",
         "/Users/harriahola/Projects/Swift/vindR/Sources/vindR/BrowserModel.swift",
         "/Users/harriahola/Projects/Swift/vindR/Sources/vindR/BrowserNotes.swift",
         "/Users/harriahola/Projects/Swift/vindR/Sources/vindR/BrowserSettings.swift",
         "/Users/harriahola/Projects/Swift/vindR/Sources/vindR/BrowserTools.swift",
         "/Users/harriahola/Projects/Swift/vindR/Sources/vindR/BrowserView.swift",
         "/Users/harriahola/Projects/Swift/vindR/Sources/vindR/ContentBlocker.swift",
+        "/Users/harriahola/Projects/Swift/vindR/Sources/vindR/DeveloperCapture.swift",
         "/Users/harriahola/Projects/Swift/vindR/Sources/vindR/VindRApp.swift",
         "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/DerivedSources/resource_bundle_accessor.swift"
       ],
       "tempsPath" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.vindRPackageTests-arm64-apple-macosx-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRPackageTests.build/sources",
+      "importPath" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRPackageTests.derived/runner.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/Modules/vindRTests.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRPackageTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "vindRPackageTests",
+      "moduleOutputPath" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/Modules/vindRPackageTests.swiftmodule",
+      "objects" : [
+        "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRPackageTests.build/runner.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx13.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-Xfrontend",
+        "-enable-cross-import-overlays",
+        "-j10",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRPackageTests.build/include/vindRPackageTests-Swift.h",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "vindr"
+      ],
+      "outputFileMapPath" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRPackageTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRPackageTests.build/runner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/Modules/vindRPackageTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRPackageTests.derived/runner.swift"
+      ],
+      "tempsPath" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRPackageTests.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.vindRTests-arm64-apple-macosx-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRTests.build/sources",
+      "importPath" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/Tests/vindRTests/DeveloperCaptureTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "vindRTests",
+      "moduleOutputPath" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/Modules/vindRTests.swiftmodule",
+      "objects" : [
+        "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRTests.build/DeveloperCaptureTests.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-Xfrontend",
+        "-enable-cross-import-overlays",
+        "-j10",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "vindr"
+      ],
+      "outputFileMapPath" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRTests.build/DeveloperCaptureTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/Modules/vindRTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/harriahola/Projects/Swift/vindR/Tests/vindRTests/DeveloperCaptureTests.swift"
+      ],
+      "tempsPath" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRTests.build",
       "wholeModuleOptimization" : false
     }
   },
@@ -221,12 +434,14 @@
       "-package-name",
       "vindr",
       "-c",
+      "/Users/harriahola/Projects/Swift/vindR/Sources/vindR/BrowserDownloads.swift",
       "/Users/harriahola/Projects/Swift/vindR/Sources/vindR/BrowserModel.swift",
       "/Users/harriahola/Projects/Swift/vindR/Sources/vindR/BrowserNotes.swift",
       "/Users/harriahola/Projects/Swift/vindR/Sources/vindR/BrowserSettings.swift",
       "/Users/harriahola/Projects/Swift/vindR/Sources/vindR/BrowserTools.swift",
       "/Users/harriahola/Projects/Swift/vindR/Sources/vindR/BrowserView.swift",
       "/Users/harriahola/Projects/Swift/vindR/Sources/vindR/ContentBlocker.swift",
+      "/Users/harriahola/Projects/Swift/vindR/Sources/vindR/DeveloperCapture.swift",
       "/Users/harriahola/Projects/Swift/vindR/Sources/vindR/VindRApp.swift",
       "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/DerivedSources/resource_bundle_accessor.swift",
       "-I",
@@ -280,18 +495,154 @@
       "vindr",
       "-driver-use-frontend-path",
       "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "vindRPackageTests" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "vindRPackageTests",
+      "-package-name",
+      "vindr",
+      "-c",
+      "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRPackageTests.derived/runner.swift",
+      "-I",
+      "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx13.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-Xfrontend",
+      "-enable-cross-import-overlays",
+      "-j10",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRPackageTests.build/include/vindRPackageTests-Swift.h",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "vindr",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "vindRTests" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "vindRTests",
+      "-package-name",
+      "vindr",
+      "-c",
+      "/Users/harriahola/Projects/Swift/vindR/Tests/vindRTests/DeveloperCaptureTests.swift",
+      "-I",
+      "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-Xfrontend",
+      "-enable-cross-import-overlays",
+      "-j10",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "vindr",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
     ]
   },
   "targetDependencyMap" : {
     "vindR" : [
 
+    ],
+    "vindRPackageTests" : [
+      "vindRTests",
+      "vindR"
+    ],
+    "vindRTests" : [
+      "vindR"
     ]
   },
   "testDiscoveryCommands" : {
 
   },
   "testEntryPointCommands" : {
+    "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRPackageTests.derived/runner.swift" : {
+      "inputs" : [
 
+      ],
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRPackageTests.derived/runner.swift"
+        }
+      ]
+    }
   },
   "traitConfiguration" : {
     "default" : {
@@ -336,6 +687,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/Sources/vindR/BrowserDownloads.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/harriahola/Projects/Swift/vindR/Sources/vindR/BrowserModel.swift"
         },
         {
@@ -360,6 +715,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/Sources/vindR/DeveloperCapture.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/harriahola/Projects/Swift/vindR/Sources/vindR/VindRApp.swift"
         },
         {
@@ -375,6 +734,10 @@
         {
           "kind" : "virtual",
           "name" : "<link-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/BrowserDownloads.swift.o"
         },
         {
           "kind" : "file",
@@ -402,6 +765,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/DeveloperCapture.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/VindRApp.swift.o"
         },
         {
@@ -410,6 +777,92 @@
         }
       ],
       "outputFilePath" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.product/Objects.LinkFileList"
+    },
+    "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRPackageTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRPackageTests.derived/runner.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRPackageTests.build/sources"
+    },
+    "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRPackageTests.product/Objects.LinkFileList" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<link-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/BrowserDownloads.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/BrowserModel.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/BrowserNotes.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/BrowserSettings.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/BrowserTools.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/BrowserView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/ContentBlocker.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/DeveloperCapture.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/VindRApp.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindR.build/resource_bundle_accessor.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRPackageTests.build/runner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRTests.build/DeveloperCaptureTests.swift.o"
+        }
+      ],
+      "outputFilePath" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRPackageTests.product/Objects.LinkFileList"
+    },
+    "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/harriahola/Projects/Swift/vindR/Tests/vindRTests/DeveloperCaptureTests.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/harriahola/Projects/Swift/vindR/.build/arm64-apple-macosx/debug/vindRTests.build/sources"
     }
   }
 }
