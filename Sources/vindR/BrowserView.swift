@@ -65,10 +65,7 @@ struct BrowserView: View {
         .padding(.trailing, 10)
         .frame(height: 20)
         .background {
-            ZStack {
-                VindRTheme.toolbarGradient
-                Rectangle().fill(.ultraThinMaterial).opacity(0.6)
-            }
+            VindRTheme.toolbarGradient
         }
         .overlay(alignment: .top) {
             Rectangle().fill(Color.white.opacity(0.06)).frame(height: 1)
@@ -84,6 +81,16 @@ private enum VindRTheme {
     static let accentBright = Color(hex: "#3A7BFF")
     static let text = Color(hex: "#F0F4FF")
     static let redLED = Color(hex: "#FF3B30")
+    static let chromeTop = Color(red: 52 / 255, green: 59 / 255, blue: 83 / 255)
+    static let chromeMiddle = Color(red: 44 / 255, green: 51 / 255, blue: 76 / 255)
+    static let chromeBottom = Color(red: 34 / 255, green: 42 / 255, blue: 68 / 255)
+    static let sidebarTop = Color(red: 24 / 255, green: 37 / 255, blue: 70 / 255)
+    static let sidebarMiddle = Color(red: 18 / 255, green: 28 / 255, blue: 59 / 255)
+    static let sidebarHighlight = Color(red: 24 / 255, green: 46 / 255, blue: 65 / 255)
+    static let tabBar = Color(red: 22 / 255, green: 33 / 255, blue: 56 / 255)
+    static let tabActive = Color(red: 44 / 255, green: 50 / 255, blue: 74 / 255)
+    static let tabActiveBorder = Color(red: 70 / 255, green: 74 / 255, blue: 95 / 255)
+    static let tabInactiveText = Color(red: 122 / 255, green: 125 / 255, blue: 140 / 255)
 
     static var windowGradient: some View {
         ZStack {
@@ -104,7 +111,15 @@ private enum VindRTheme {
     }
 
     static var toolbarGradient: LinearGradient {
-        LinearGradient(colors: [bgDeep, bgTab.opacity(0.9)], startPoint: .top, endPoint: .bottom)
+        LinearGradient(
+            stops: [
+                .init(color: chromeTop, location: 0),
+                .init(color: chromeMiddle, location: 0.5),
+                .init(color: chromeBottom, location: 1)
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
     }
 
     static var tabStripGradient: LinearGradient {
@@ -116,7 +131,7 @@ private enum VindRTheme {
     }
 
     static var activeTabGradient: LinearGradient {
-        LinearGradient(colors: [bgTab.opacity(0.8), bgDeep], startPoint: .top, endPoint: .bottom)
+        LinearGradient(colors: [tabActive, tabActive], startPoint: .top, endPoint: .bottom)
     }
 
     static var cardGradient: LinearGradient {
@@ -125,7 +140,7 @@ private enum VindRTheme {
 
     static var activeTabBorderGradient: LinearGradient {
         LinearGradient(
-            colors: [Color.white.opacity(0.10), Color.white.opacity(0.03)],
+            colors: [tabActiveBorder, tabActiveBorder],
             startPoint: .top,
             endPoint: .bottom
         )
@@ -199,10 +214,7 @@ private struct TabStripView: View {
         .padding(.horizontal, 10)
         .frame(height: 38)
         .background {
-            ZStack {
-                VindRTheme.tabStripGradient
-                Rectangle().fill(.ultraThinMaterial).opacity(0.4)
-            }
+            VindRTheme.tabBar
         }
         .overlay(alignment: .bottom) {
             Rectangle().fill(Color.white.opacity(0.06)).frame(height: 1)
@@ -254,12 +266,12 @@ private struct TabItemView: View {
     var body: some View {
         HStack(spacing: 6) {
             Circle()
-                .fill(VindRTheme.accentBlue)
+                .fill(isSelected ? VindRTheme.tabActiveBorder : VindRTheme.tabInactiveText)
                 .frame(width: 6, height: 6)
             Button(action: { browser.select(tab) }) {
                 Text(tab.title)
                     .font(.system(size: browser.chromeFontSize, weight: isSelected ? .medium : .regular))
-                    .foregroundStyle(Color.white.opacity(isSelected ? 1 : 0.6))
+                    .foregroundStyle(isSelected ? Color.white : VindRTheme.tabInactiveText)
                     .lineLimit(1)
                     .frame(maxWidth: 150, alignment: .leading)
             }
@@ -268,7 +280,7 @@ private struct TabItemView: View {
                 Button(action: { browser.close(tab) }) {
                     Image(systemName: "xmark")
                         .font(.system(size: 8, weight: .bold))
-                        .foregroundStyle(Color.white.opacity(0.5))
+                        .foregroundStyle(isSelected ? VindRTheme.tabActiveBorder : VindRTheme.tabInactiveText)
                         .frame(width: 16, height: 16)
                 }
                 .buttonStyle(.plain)
@@ -279,7 +291,7 @@ private struct TabItemView: View {
         .background(
             isSelected
                 ? VindRTheme.activeTabGradient
-                : LinearGradient(colors: [.clear], startPoint: .top, endPoint: .bottom),
+                : LinearGradient(colors: [VindRTheme.tabBar, VindRTheme.tabBar], startPoint: .top, endPoint: .bottom),
             in: RoundedRectangle(cornerRadius: 6)
         )
         .overlay {
@@ -290,14 +302,6 @@ private struct TabItemView: View {
                         : LinearGradient(colors: [.clear], startPoint: .top, endPoint: .bottom),
                     lineWidth: 1
                 )
-        }
-        .overlay(alignment: .bottom) {
-            if isSelected {
-                Rectangle()
-                    .fill(VindRTheme.cyanBlueGradient)
-                    .frame(height: 2)
-                    .shadow(color: VindRTheme.accentCyan.opacity(0.6), radius: 6)
-            }
         }
         .clipShape(RoundedRectangle(cornerRadius: 6))
     }
@@ -361,10 +365,7 @@ private struct TopBarView: View {
         .padding(.trailing, 12)
         .frame(height: browser.toolbarHeight)
         .background {
-            ZStack {
-                VindRTheme.toolbarGradient
-                Rectangle().fill(.ultraThinMaterial).opacity(0.6)
-            }
+            VindRTheme.toolbarGradient
         }
         .overlay(alignment: .bottom) {
             Rectangle().fill(Color.white.opacity(0.08)).frame(height: 1)
@@ -592,11 +593,23 @@ private struct WorkspaceSidebarView: View {
         }
         .padding(12)
         .background {
-            LinearGradient(
-                colors: [VindRTheme.bgTab.opacity(0.78), VindRTheme.bgDeep.opacity(0.94)],
-                startPoint: .top,
-                endPoint: .bottom
-            )
+            ZStack {
+                LinearGradient(
+                    stops: [
+                        .init(color: VindRTheme.sidebarTop, location: 0),
+                        .init(color: VindRTheme.sidebarMiddle, location: 0.5),
+                        .init(color: VindRTheme.tabBar, location: 1)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                RadialGradient(
+                    colors: [VindRTheme.sidebarHighlight, .clear],
+                    center: .center,
+                    startRadius: 0,
+                    endRadius: 240
+                )
+            }
         }
     }
 
@@ -624,7 +637,7 @@ private struct SidebarTabRow: View {
     var body: some View {
         HStack(spacing: 7) {
             Circle()
-                .fill(VindRTheme.accentBlue)
+                .fill(isSelected ? VindRTheme.tabActiveBorder : VindRTheme.tabInactiveText)
                 .frame(width: 6, height: 6)
             Button(action: { browser.select(tab) }) {
                 Text(tab.title)
@@ -641,11 +654,11 @@ private struct SidebarTabRow: View {
                 .buttonStyle(.plain)
             }
         }
-        .foregroundStyle(Color.white.opacity(isSelected ? 0.95 : 0.55))
+        .foregroundStyle(isSelected ? Color.white : VindRTheme.tabInactiveText)
         .padding(.horizontal, 10)
         .frame(height: 30)
-        .background(isSelected ? Color.white.opacity(0.09) : .clear, in: RoundedRectangle(cornerRadius: 6))
-        .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.white.opacity(isSelected ? 0.08 : 0), lineWidth: 1))
+        .background(isSelected ? VindRTheme.tabActive : VindRTheme.tabBar, in: RoundedRectangle(cornerRadius: 6))
+        .overlay(RoundedRectangle(cornerRadius: 6).stroke(isSelected ? VindRTheme.tabActiveBorder : .clear, lineWidth: 1))
     }
 
     private var isSelected: Bool { tab.id == browser.selectedTabID }

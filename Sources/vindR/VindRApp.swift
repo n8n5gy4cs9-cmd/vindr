@@ -22,6 +22,7 @@ struct VindRApp: App {
                 .environmentObject(browser)
                 .frame(minWidth: 640, minHeight: 420)
                 .preferredColorScheme(.dark)
+                .background(WindowChromeBackground())
         }
         .defaultSize(width: 1280, height: 800)
         .windowStyle(.hiddenTitleBar)
@@ -34,6 +35,31 @@ struct VindRApp: App {
                 .preferredColorScheme(.dark)
         }
         .defaultSize(width: 900, height: 650)
+    }
+}
+
+private struct WindowChromeBackground: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSView {
+        let view = NSView()
+        apply(to: view)
+        return view
+    }
+
+    func updateNSView(_ view: NSView, context: Context) {
+        apply(to: view)
+    }
+
+    private func apply(to view: NSView) {
+        DispatchQueue.main.async {
+            guard let window = view.window else { return }
+            window.backgroundColor = NSColor(
+                red: 52 / 255,
+                green: 59 / 255,
+                blue: 83 / 255,
+                alpha: 1
+            )
+            window.titlebarAppearsTransparent = true
+        }
     }
 }
 

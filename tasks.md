@@ -123,3 +123,13 @@
   - [x] Add a matching Help card to the Tools sidebar.
   - [x] Add an in-app general guide and complete keyboard-shortcut reference.
   - [x] Synchronize documentation, test, package, and verify the release build.
+- [x] Task 24: screenshot-exact neutral chrome palette.
+  - [x] Replace the blue top-bar gradient with the supplied three-stop RGB gradient.
+  - [x] Apply the supplied layered sidebar gradient and radial highlight.
+  - [x] Match tab-strip, active-tab, inactive-tab, border, and text colors exactly.
+  - [x] Build, package, and verify without changing behavior.
+- [x] Task 25: native title-bar color continuity.
+  - [x] Set the macOS traffic-light area to `rgb(52, 59, 83)`.
+  - [x] Keep the title bar transparent to the configured window background so it continues into the toolbar.
+- [x] Task 26: active-tab title contrast.
+  - [x] Set active tab titles to `rgb(255, 255, 255)` in both tab layouts.

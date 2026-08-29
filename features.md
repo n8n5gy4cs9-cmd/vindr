@@ -12,6 +12,7 @@
 - DuckDuckGo, Google, and Bing search-engine selection
 - Private-mode, back, forward, stop/reload, copy-current-URL, Go, and sidebar controls in the top bar
 - Configurable-height hideable top bar with native macOS window controls
+- Native traffic-light area matched to the toolbar's `rgb(52, 59, 83)` top color
 - Persistent compact restore control while the top bar is hidden
 - Hideable Tools sidebar with matching Notes, Developer Tools, Settings, and Help cards
 - Native in-app general guide and complete keyboard-shortcut reference
@@ -20,7 +21,7 @@
 - Centered capsule location field with HTTPS state
 - Private-session LED status pill
 - Multiple tabs with create, select, and close controls
-- Deep-navy tab styling with a cyan active-tab accent
+- Screenshot-matched slate tab strip with neutral active and inactive tab states
 - `target="_blank"` and `window.open` links opened in vindR tabs
 - Configurable background-tab freezing
 - Optional real-time background-freeze countdown in the tab row
@@ -43,7 +44,7 @@
 
 - Reversible dark-page styling
 - Sanitized local Reader view
-- Screenshot-matched native glass shell with full-window navy/cyan gradients, focus glows, and cyan accents
+- Screenshot-matched slate top-bar gradient and layered navy/slate sidebar background
 - Native dark shell with blur and a 16:10 default window
 - Colored, formatted developer-tool output
 
